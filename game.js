@@ -9,18 +9,29 @@ function preload() {
 
 }
 
+var cnvX = 3204;
+
+var cnvY = 1802;
+
 /******************
 setup
 *****************/
 
 function setup() {
+
+	bg = new Sprite(cnvX/2, cnvY/2, cnvX, cnvY, "n");
+	bg.image = imgBG;
+	bg.depth = 100;
+
     
     console.log("setup");
     frameRate(60);
 
-    cnv = new Canvas(3204, 1802);
+    cnv = new Canvas(cnvX, cnvY);
 
     player = new Sprite(50, 50, 50, 50);
+
+	player.layer = 10;
 
     drawWalls();
 }
@@ -34,10 +45,14 @@ drawFunc
 
 function draw() {
     
-    background("imgBG");
-    camera.moveTo(player.x, player.y, 1)
-   // camera.x=player.x;
-   // camera.y=player.y;
+    background('green');
+
+	//cnv.drawImage(imgBG, 0, 0, cnvX, cnvY);
+
+
+    //camera.moveTo(player.x, player.y, 1)
+    camera.x=player.x;
+    camera.y=player.y;
 
    controls();
     
@@ -83,6 +98,8 @@ function controls () {
 		player.vel.x = 0;
 	}
 
+	
+
 	if (kb.pressing('up')) {
 
 		player.vel.y = -5;
@@ -109,7 +126,7 @@ function drawWalls() {
 
 
 
-	wallLH  = new Sprite(0, 901, 8, 1802, 'k');
+	wallLH  = new Sprite(0, cnvY/2, 8, cnvY, 'k');
 
 	wallLH.color = 'black';
 
@@ -120,7 +137,7 @@ function drawWalls() {
 
 
 
-	wallRH  = new Sprite(windowWidth, windowHeight/2, 8, windowHeight, 'k');
+	wallRH  = new Sprite(cnvX, cnvY/2, 8, cnvY, 'k');
 
 	wallRH.color = 'green';
 
@@ -131,7 +148,7 @@ function drawWalls() {
 
 
 
-	wallTop = new Sprite(windowWidth/2, 0, windowWidth, 8, 'k');
+	wallTop = new Sprite(cnvX/2, 0, cnvX, 8, 'k');
 
 	wallTop.color = 'blue';
 
@@ -144,7 +161,7 @@ function drawWalls() {
 
 
 
-	wallBottom = new Sprite(windowWidth/2, windowHeight, windowWidth, 8, 'k');
+	wallBottom = new Sprite(cnvX/2, cnvY, cnvX, 8, 'k');
 
 	wallBottom.color = 'red';
 
