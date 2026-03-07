@@ -9,9 +9,9 @@ function preload() {
 
 }
 
-var cnvX = 3204;
+var worldX = 3204;
 
-var cnvY = 1802;
+var worldY = 1802;
 
 /******************
 setup
@@ -19,7 +19,7 @@ setup
 
 function setup() {
 
-	bg = new Sprite(cnvX/2, cnvY/2, cnvX, cnvY, "n");
+	bg = new Sprite(worldX/2, worldY/2, worldX, worldY, "n");
 	bg.image = imgBG;
 	bg.depth = 100;
 
@@ -27,11 +27,16 @@ function setup() {
     console.log("setup");
     frameRate(60);
 
-    cnv = new Canvas(cnvX, cnvY);
+    cnv = new Canvas(windowWidth, windowHeight);
 
+	
     player = new Sprite(50, 50, 50, 50);
 
 	player.layer = 10;
+
+	
+	camera.x=player.x;
+	camera.y=player.y;
 
     drawWalls();
 }
@@ -47,77 +52,65 @@ function draw() {
     
     background('green');
 
-	//cnv.drawImage(imgBG, 0, 0, cnvX, cnvY);
 
-
-    //camera.moveTo(player.x, player.y, 1)
-    camera.x=player.x;
-    camera.y=player.y;
+	//cnv.drawImage(imgBG, 0, 0, worldX, worldY);
 
    controls();
+
+   // camera.moveTo(player.x, player.y, 3)
+    //camera.x=player.x;
+    //camera.y=player.y;
+	camera.x += (player.x - camera.x) * 0.1
+	camera.y += (player.y - camera.y) * 0.1
+
+	if (Math.abs(camera.x-worldX/2)+windowWidth/2>worldX/2) {
+
+		camera.x = worldX/2+(camera.x-worldX/2)/Math.abs(camera.x-worldX/2)*(worldX/2-windowWidth/2)
+
+	}
+
+		if (Math.abs(camera.y-worldY/2)+windowHeight/2>worldY/2) {
+
+		camera.y = worldY/2+(camera.y-worldY/2)/Math.abs(camera.y-worldY/2)*(worldY/2-windowHeight/2)
+
+	}
     
-    console.log("camera then player");
-    console.log(camera.x);
-    console.log(camera.y);
-    console.log(player.x);
-    console.log(player.y);
+   // console.log("camera then player");
+   // console.log(camera.x);
+   // console.log(camera.y);
+   // console.log(player.x);
+   // console.log(player.y);
 }
 
 
 function controls () {
     
-	if (kb.pressing('left')) {
+	if (kb.pressing('left') && !kb.pressing('right')) {
+		player.vel.x = -5;
+	} 
 
-		player.vel.x = player.vel.x - 5;
+	else if (kb.pressing('right') && !kb.pressing('left')) {
+		player.vel.x = 5;
+	} 
 
-
-	}  
-    
-    if (kb.pressing ('right')) {
-
-		player.vel.x = player.vel.x + 5;
-       
-
-	};
-
-    if (player.vel.x>5) {
-
-        player.vel.x=5;
-    } else if (player.vel.x<-5) {
-        player.vel.x=-5;
-    }
-
-
-
-	if (kb.released('left')) {
-
-	player.vel.x = 0;
-
-	} else if (kb.released('right')) {
-
+	else {
 		player.vel.x = 0;
 	}
 
+
 	
-
-	if (kb.pressing('up')) {
-
+	if (kb.pressing('up') && !kb.pressing('down')) {
 		player.vel.y = -5;
+	} 
 
-
-	} else if (kb.pressing ('down')) {
-
+	else if (kb.pressing('down') && !kb.pressing('up')) {
 		player.vel.y = 5;
-	}
+	} 
 
-	if (kb.released('up')) {
-
-	player.vel.y = 0;
-
-	} else if (kb.released('down')) {
-
+	else {
 		player.vel.y = 0;
 	}
+
 
 }
 
@@ -126,7 +119,7 @@ function drawWalls() {
 
 
 
-	wallLH  = new Sprite(0, cnvY/2, 8, cnvY, 'k');
+	wallLH  = new Sprite(0, worldY/2, 8, worldY, 'k');
 
 	wallLH.color = 'black';
 
@@ -137,7 +130,7 @@ function drawWalls() {
 
 
 
-	wallRH  = new Sprite(cnvX, cnvY/2, 8, cnvY, 'k');
+	wallRH  = new Sprite(worldX, worldY/2, 8, worldY, 'k');
 
 	wallRH.color = 'green';
 
@@ -148,7 +141,7 @@ function drawWalls() {
 
 
 
-	wallTop = new Sprite(cnvX/2, 0, cnvX, 8, 'k');
+	wallTop = new Sprite(worldX/2, 0, worldX, 8, 'k');
 
 	wallTop.color = 'blue';
 
@@ -161,7 +154,7 @@ function drawWalls() {
 
 
 
-	wallBottom = new Sprite(cnvX/2, cnvY, cnvX, 8, 'k');
+	wallBottom = new Sprite(worldX/2, worldY, worldX, 8, 'k');
 
 	wallBottom.color = 'red';
 
@@ -171,3 +164,8 @@ function drawWalls() {
 	//wallBot = new Sprite(x, y, w, h, 'k');
 
 }
+
+
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
+};
