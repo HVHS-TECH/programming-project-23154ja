@@ -39,7 +39,17 @@ function setup() {
 
     cnv = new Canvas(windowWidth, windowHeight);
 
+	wormSetup();
+	
+	camera.x=player.x;
+	camera.y=player.y;
 
+    drawWalls();
+}
+
+
+function wormSetup() {
+		
 	playerBorder = new Sprite(500, 50, 52);
 
 	playerBorder.strokeWeight=0;
@@ -86,17 +96,7 @@ function setup() {
 	tailSegments.push(tail);
 
 	}
-
-
-console.log(tailBorderSegments);
-	
-	camera.x=player.x;
-	camera.y=player.y;
-
-    drawWalls();
 }
-
-
 
 
 /******************
@@ -135,21 +135,21 @@ function draw() {
 }
 
 
-function controls (playerSpeed) {
+function controls (speed) {
 
 	let movingX = true;
 	let movingY = true;
     
 	if (kb.pressing('left') && !kb.pressing('right')) {
-		player.x += -playerSpeed;
+		playerBorder.x += -speed;
 	} 
 
 	else if (kb.pressing('right') && !kb.pressing('left')) {
-		player.x += playerSpeed;
+		playerBorder.x += speed;
 	} 
 
 	else {
-		player.vel.x = 0;
+		playerBorder.vel.x = 0;
 
 		movingX = false;
 	}
@@ -157,21 +157,21 @@ function controls (playerSpeed) {
 
 	
 	if (kb.pressing('up') && !kb.pressing('down')) {
-		player.y += -playerSpeed;
+		playerBorder.y += -speed;
 	} 
 
 	else if (kb.pressing('down') && !kb.pressing('up')) {
-		player.y += playerSpeed;
+		playerBorder.y += speed;
 	} 
 
 	else {
-		player.vel.y = 0;
+		playerBorder.vel.y = 0;
 
 		movingY = false;
 	}
 
-	playerBorder.x=player.x;
-	playerBorder.y=player.y;
+	player.x=playerBorder.x;
+	player.y=playerBorder.y;
 
 	if (movingX || movingY) {
 		moveTail();
