@@ -15,6 +15,8 @@ const WORLDY = 1802;
 
 const WORMLENGTH = 60;
 
+const WORMWIDTH = 52;
+
 const WORMSPEED = 5;
 
 let lastSegment = 0;
@@ -44,13 +46,12 @@ function setup() {
 	camera.x=player.x;
 	camera.y=player.y;
 
-    drawWalls();
 }
 
 
 function wormSetup() {
 		
-	playerBorder = new Sprite(500, 50, 52);
+	playerBorder = new Sprite(500, 50, WORMWIDTH);
 
 	playerBorder.strokeWeight=0;
 
@@ -59,7 +60,7 @@ function wormSetup() {
 	playerBorder.layer = 1;
 
 	
-    player = new Sprite(500, 50, 50, "n");
+    player = new Sprite(500, 50, WORMWIDTH-2, "n");
 
 	player.color = "salmon";
 
@@ -73,7 +74,7 @@ function wormSetup() {
 
 	for (i = 0; i < WORMLENGTH; i++) {
 
-	tailBorder = new Sprite(player.x+(i-60)*WORMSPEED, player.y, 52, "n");
+	tailBorder = new Sprite(player.x+(i-60)*WORMSPEED, player.y, WORMWIDTH, "n");
 
 	tailBorder.layer = 1;
 
@@ -85,7 +86,7 @@ function wormSetup() {
 
 
 
-	tail = new Sprite(player.x+(i-60)*WORMSPEED, player.y, 50, "n");
+	tail = new Sprite(player.x+(i-60)*WORMSPEED, player.y, WORMWIDTH-2, "n");
 
 	tail.layer = 2;
 
@@ -99,6 +100,7 @@ function wormSetup() {
 }
 
 
+
 /******************
 drawFunc
 *****************/
@@ -110,32 +112,15 @@ function draw() {
 
 	
 
-	
-	//temp = new Sprite(player.x, player.y, 50, 50, "n");
+   playerMove(WORMSPEED);
 
-	//temp.life = 60
-
-	//temp.color = "blue";
-
-	//cnv.drawImage(imgBG, 0, 0, WORLDX, WORLDY);
-
-   controls(WORMSPEED);
-
-   // camera.moveTo(player.x, player.y, 3)
-    //camera.x=player.x;
-    //camera.y=player.y;
 
 	moveCamera(5);
     
-   // console.log("camera then player");
-   // console.log(camera.x);
-   // console.log(camera.y);
-   // console.log(player.x);
-   // console.log(player.y);
 }
 
 
-function controls (speed) {
+function playerMove (speed) {
 
 	let movingX = true;
 	let movingY = true;
@@ -170,63 +155,30 @@ function controls (speed) {
 		movingY = false;
 	}
 
+
+	if (Math.abs(playerBorder.x-WORLDX/2)+WORMWIDTH/2>WORLDX/2) {
+
+		playerBorder.x = WORLDX/2+(playerBorder.x-WORLDX/2)/Math.abs(playerBorder.x-WORLDX/2)*(WORLDX/2-WORMWIDTH/2)
+
+		movingX = false;
+
+	}
+
+		if (Math.abs(playerBorder.y-WORLDY/2)+WORMWIDTH/2>WORLDY/2) {
+
+		playerBorder.y = WORLDY/2+(playerBorder.y-WORLDY/2)/Math.abs(playerBorder.y-WORLDY/2)*(WORLDY/2-WORMWIDTH/2)
+
+		movingY = false;
+
+	}
+
+
 	player.x=playerBorder.x;
 	player.y=playerBorder.y;
 
 	if (movingX || movingY) {
 		moveTail();
 	}
-
-}
-
-
-function drawWalls() {
-
-
-
-	wallLH  = new Sprite(0, WORLDY/2, 8, WORLDY, 'k');
-
-	wallLH.color = 'black';
-
-	wallLH.bounciness = 0;
-	wallLH.friction = 0;
-	wallLH.drag = 0;
-
-
-
-
-	wallRH  = new Sprite(WORLDX, WORLDY/2, 8, WORLDY, 'k');
-
-	wallRH.color = 'green';
-
-	wallRH.bounciness = 0;
-	wallRH.friction = 0;
-	wallRH.drag = 0;
-
-
-
-
-	wallTop = new Sprite(WORLDX/2, 0, WORLDX, 8, 'k');
-
-	wallTop.color = 'blue';
-
-	wallTop.bounciness = 0;
-	wallTop.friction = 0;
-	wallTop.drag = 0;
-
-
-
-
-
-
-	wallBottom = new Sprite(WORLDX/2, WORLDY, WORLDX, 8, 'k');
-
-	wallBottom.color = 'red';
-
-	wallBottom.bounciness = 0;
-	wallBottom.friction = 0;
-	wallBottom.drag = 0;
-	//wallBot = new Sprite(x, y, w, h, 'k');
 
 }
 
@@ -253,6 +205,7 @@ function moveCamera(percentPerFrame) {
 
 	}
 }
+
 
 function moveTail() {
 	tailSegments[lastSegment].x=player.x;
