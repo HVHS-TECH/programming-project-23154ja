@@ -13,7 +13,7 @@ const WORLDX = 3204;
 
 const WORLDY = 1802;
 
-const WORMLENGTH = 60;
+const WORMLENGTH = 67;
 
 const WORMWIDTH = 52;
 
@@ -107,13 +107,9 @@ drawFunc
 
 function draw() {
     
-    background('green');
+	background('green');
 
-
-	
-
-   playerMove(WORMSPEED);
-
+	playerMove(WORMSPEED);
 
 	moveCamera(5);
     
@@ -124,13 +120,15 @@ function playerMove (speed) {
 
 	let movingX = true;
 	let movingY = true;
+	xDirection = 0;
+	yDirection = 0;
     
 	if (kb.pressing('left') && !kb.pressing('right')) {
-		playerBorder.x += -speed;
+		xDirection = -1;
 	} 
 
 	else if (kb.pressing('right') && !kb.pressing('left')) {
-		playerBorder.x += speed;
+		xDirection = 1;
 	} 
 
 	else {
@@ -142,11 +140,11 @@ function playerMove (speed) {
 
 	
 	if (kb.pressing('up') && !kb.pressing('down')) {
-		playerBorder.y += -speed;
+		yDirection = -1;
 	} 
 
 	else if (kb.pressing('down') && !kb.pressing('up')) {
-		playerBorder.y += speed;
+		yDirection = 1;
 	} 
 
 	else {
@@ -154,6 +152,28 @@ function playerMove (speed) {
 
 		movingY = false;
 	}
+
+
+	if (!movingY) {
+
+		playerBorder.x += xDirection*speed;
+
+	} else {
+
+		playerBorder.x += xDirection*Math.sqrt(speed**2/2);
+
+	}
+
+	if (!movingX) {
+
+		playerBorder.y += yDirection*speed;
+
+	} else {
+
+		playerBorder.y += yDirection*Math.sqrt(speed**2/2)
+
+	}
+
 
 
 	if (Math.abs(playerBorder.x-WORLDX/2)+WORMWIDTH/2>WORLDX/2) {
