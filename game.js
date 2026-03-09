@@ -7,11 +7,12 @@ function preload() {
 
   imgBG   = loadImage('assets/images/supersushi4.png');
 
+
 }
 
-const WORLDX = 3204;
+const WORLDX = 6000;
 
-const WORLDY = 1802;
+const WORLDY = 6000;
 
 const WORMLENGTH = 60;
 
@@ -30,6 +31,8 @@ setup
 *****************/
 
 function setup() {
+	imgBG.resize(6000,6000);
+
 
 	bg = new Sprite(WORLDX/2, WORLDY/2, WORLDX, WORLDY, "n");
 	bg.image = imgBG;
