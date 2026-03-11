@@ -75,9 +75,9 @@ function wormSetup() {
 
 
 
-	for (i = 0; i < WORMLENGTH; i++) {
+	for (i = 1; i = WORMLENGTH; i++) {
 
-	tailBorder = new Sprite(player.x+(i-60)*WORMSPEED, player.y, WORMWIDTH, "n");
+	tailBorder = new Sprite(player.x+(i-WORMLENGTH)*WORMSPEED, player.y, WORMWIDTH, "n");
 
 	tailBorder.layer = 1;
 
@@ -89,7 +89,7 @@ function wormSetup() {
 
 
 
-	tail = new Sprite(player.x+(i-60)*WORMSPEED, player.y, WORMWIDTH-2, "n");
+	tail = new Sprite(player.x+(i-WORMLENGTH)*WORMSPEED, player.y, WORMWIDTH-2, "n");
 
 	tail.layer = 2;
 
