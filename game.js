@@ -8,7 +8,7 @@ const WORMWIDTH = 52;
 
 const WORMSPEED = 5;
 
-const FOODSPACING = 1000**2;
+const FOODSPACING = 1000 ** 2;
 
 const WORLDSEED = 112358;
 
@@ -30,7 +30,7 @@ let faceSprite;
 
 let foodGroup;
 
-
+let firstSegment = WORMLENGTH - 1;
 let lastSegment = 0;
 
 let tailSegments = [];
@@ -99,20 +99,11 @@ function wormSetup() {
 
 	player.color = "salmon";
 
+	player.img = imgFace;
+
 	player.strokeWeight = 0;
 
 	player.layer = 9;
-
-
-	faceSprite = new Sprite(playerBorder.x, playerBorder.y, WORMWIDTH - 2, "n");
-
-	faceSprite.img = imgFace;
-
-	faceSprite.strokeWeight = 0;
-
-	faceSprite.layer = 10;
-
-
 
 
 
@@ -147,9 +138,9 @@ function initalFoodSetup() {
 
 	foodGroup = new Group();
 
-	for (let i = 0; i < WORLDX*WORLDY/FOODSPACING; i++) {
+	for (let i = 0; i < WORLDX * WORLDY / FOODSPACING; i++) {
 
-		let foodItem = new Sprite(random(WORLDX),random(WORLDY), "n");
+		let foodItem = new Sprite(random(WORLDX), random(WORLDY), "n");
 		foodGroup.add(foodItem);
 	}
 }
@@ -233,7 +224,9 @@ function playerMove(speed) {
 
 		playerBorder.x = WORLDX / 2 + (playerBorder.x - WORLDX / 2) / Math.abs(playerBorder.x - WORLDX / 2) * (WORLDX / 2 - WORMWIDTH / 2)
 
-		movingX = false;
+		if (playerBorder.x == tailBorderSegments[firstSegment].x) {
+			movingX = false;
+		}
 
 	}
 
@@ -241,7 +234,9 @@ function playerMove(speed) {
 
 		playerBorder.y = WORLDY / 2 + (playerBorder.y - WORLDY / 2) / Math.abs(playerBorder.y - WORLDY / 2) * (WORLDY / 2 - WORMWIDTH / 2)
 
-		movingY = false;
+		if (playerBorder.y == tailBorderSegments[firstSegment].y) {
+			movingY = false;
+		}
 
 	}
 
@@ -249,14 +244,12 @@ function playerMove(speed) {
 	player.x = playerBorder.x;
 	player.y = playerBorder.y;
 
-	faceSprite.x = playerBorder.x;
-	faceSprite.y = playerBorder.y;
-
 	if (movingX || movingY) {
 		moveTail();
 	}
 
 }
+
 
 
 function windowResized() {
@@ -293,6 +286,11 @@ function moveTail() {
 	lastSegment++;
 	if (lastSegment == WORMLENGTH) {
 		lastSegment = 0;
+	}
+
+	firstSegment++;
+	if (firstSegment == WORMLENGTH) {
+		firstSegment = 0;
 	}
 }
 
