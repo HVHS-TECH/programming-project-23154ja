@@ -1,15 +1,3 @@
-
-/******************
-preload
-*****************/
-	
-function preload() {
-
-  imgBG   = loadImage('assets/images/supersushi4.png');
-
-
-}
-
 const WORLDX = 6000;
 
 const WORLDY = 6000;
@@ -20,10 +8,37 @@ const WORMWIDTH = 52;
 
 const WORMSPEED = 5;
 
+//p5 play vars
+
+let imgBG;
+
+let imgFace;
+
+let bgSprite;
+
+let cnv;
+
+let player;
+
+let playerBorder;
+
 let lastSegment = 0;
 
 let tailSegments = [];
 let tailBorderSegments = [];
+
+
+/******************
+preload
+*****************/
+	
+function preload() {
+
+  imgBG = loadImage('assets/images/supersushi4.png');
+
+  imgFace = loadImage('assets/images/face.png');
+
+}
 
 
 /******************
@@ -34,9 +49,9 @@ function setup() {
 	imgBG.resize(6000,6000);
 
 
-	bg = new Sprite(WORLDX/2, WORLDY/2, WORLDX, WORLDY, "n");
-	bg.image = imgBG;
-	bg.depth = 100;
+	bgSprite = new Sprite(WORLDX/2, WORLDY/2, WORLDX, WORLDY, "n");
+	bgSprite.image = imgBG;
+	bgSprite.depth = 100;
 
     
     console.log("setup");
@@ -65,7 +80,7 @@ function wormSetup() {
 	
     player = new Sprite(500, 50, WORMWIDTH-2, "n");
 
-	player.color = "salmon";
+	player.img = imgFace;
 
 	player.strokeWeight=0;
 
@@ -75,9 +90,9 @@ function wormSetup() {
 
 
 
-	for (i = 1; i <= WORMLENGTH; i++) {
+	for (let i = 1; i <= WORMLENGTH; i++) {
 
-	tailBorder = new Sprite(player.x+(i-WORMLENGTH)*WORMSPEED, player.y, WORMWIDTH, "n");
+	let tailBorder = new Sprite(player.x+(i-WORMLENGTH)*WORMSPEED, player.y, WORMWIDTH, "n");
 
 	tailBorder.layer = 1;
 
@@ -89,7 +104,7 @@ function wormSetup() {
 
 
 
-	tail = new Sprite(player.x+(i-WORMLENGTH)*WORMSPEED, player.y, WORMWIDTH-2, "n");
+	let tail = new Sprite(player.x+(i-WORMLENGTH)*WORMSPEED, player.y, WORMWIDTH-2, "n");
 
 	tail.layer = 2;
 
@@ -115,7 +130,7 @@ function draw() {
 	playerMove(WORMSPEED);
 
 	moveCamera(5);
-    
+
 }
 
 
@@ -123,8 +138,8 @@ function playerMove (speed) {
 
 	let movingX = true;
 	let movingY = true;
-	xDirection = 0;
-	yDirection = 0;
+	let xDirection = 0;
+	let yDirection = 0;
     
 	if (kb.pressing('left') && !kb.pressing('right')) {
 		xDirection = -1;
