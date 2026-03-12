@@ -2,6 +2,8 @@ const WORLDX = 10000;
 
 const WORLDY = 10000;
 
+const SKYHEIGHT	= 1300;
+
 const WORMLENGTH = 67;
 
 const WORMWIDTH = 52;
@@ -65,6 +67,8 @@ function setup() {
 	randomSeed(WORLDSEED);
 
 	noSmooth();
+
+	pixelDensity(1);
 
 	imgBG.resize(WORLDX, WORLDY);
 
@@ -230,9 +234,11 @@ function playerMove(speed) {
 
 	}
 
-	if (Math.abs(playerBorder.y - WORLDY / 2) + WORMWIDTH / 2 > WORLDY / 2) {
+	//fixx t5his here world 
 
-		playerBorder.y = WORLDY / 2 + (playerBorder.y - WORLDY / 2) / Math.abs(playerBorder.y - WORLDY / 2) * (WORLDY / 2 - WORMWIDTH / 2)
+	if (Math.abs(playerBorder.y - (SKYHEIGHT + (WORLDY-SKYHEIGHT) / 2)) + WORMWIDTH / 2 > (WORLDY-SKYHEIGHT) / 2) {
+
+		playerBorder.y = (SKYHEIGHT + (WORLDY-SKYHEIGHT) / 2) + (playerBorder.y - WORLDY / 2) / Math.abs(playerBorder.y - WORLDY / 2) * (WORLDY / 2 - WORMWIDTH / 2)
 
 		if (playerBorder.y == tailBorderSegments[firstSegment].y) {
 			movingY = false;
