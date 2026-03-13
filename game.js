@@ -200,24 +200,16 @@ function playerMove(speed) {
 	}
 
 
-	if (!movingY) {
-
+	if (playerBorder.y == tailBorderSegments[headSprite].y) {
 		playerBorder.x += xDirection * speed;
-
 	} else {
-
 		playerBorder.x += xDirection * Math.sqrt(speed ** 2 / 2);
-
 	}
 
-	if (!movingX) {
-
+	if (playerBorder.x == tailBorderSegments[headSprite].x) {
 		playerBorder.y += yDirection * speed;
-
 	} else {
-
 		playerBorder.y += yDirection * Math.sqrt(speed ** 2 / 2)
-
 	}
 
 
