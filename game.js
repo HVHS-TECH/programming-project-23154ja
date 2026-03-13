@@ -141,8 +141,8 @@ function initialFoodSetup() {
 	foodGroup = new Group();
 
 	for (let i = 0; i < WORLDX * WORLDY / FOODSPACING; i++) {
-
-		let foodItem = new Sprite(random(WORLDX), random(WORLDY), "n");
+// add grass constraint
+		let foodItem = new Sprite(random(WORLDX), random(SKYHEIGHT, WORLDY), "n");
 		foodGroup.add(foodItem);
 	}
 }
@@ -157,7 +157,7 @@ function draw() {
 
 	playerMove(WORMSPEED);
 
-	moveCamera(5);
+	moveCamera(10);
 
 }
 
