@@ -2,7 +2,7 @@ const WORLDX = 10000;
 
 const WORLDY = 10000;
 
-const SKYHEIGHT	= 1300;
+const SKYHEIGHT = 1300;
 
 const WORMLENGTH = 67;
 
@@ -32,17 +32,15 @@ let faceSprite;
 
 let foodGroup;
 
-let firstSegment = WORMLENGTH - 1;
-let lastSegment = 0;
+let headSprite = WORMLENGTH - 1;
+let tailSprite = 0;
 
 let tailSegments = [];
 let tailBorderSegments = [];
 
 
 
-//fix tail not teleporting when hitting wall
-
-// make background crisp
+// make sky half the height
 
 /******************
 preload
@@ -80,7 +78,7 @@ function setup() {
 
 	wormSetup();
 
-	initalFoodSetup();
+	initialFoodSetup();
 
 	camera.x = player.x;
 	camera.y = player.y;
@@ -138,7 +136,7 @@ function wormSetup() {
 	}
 }
 
-function initalFoodSetup() {
+function initialFoodSetup() {
 
 	foodGroup = new Group();
 
@@ -226,22 +224,46 @@ function playerMove(speed) {
 
 	if (Math.abs(playerBorder.x - WORLDX / 2) + WORMWIDTH / 2 > WORLDX / 2) {
 
-		playerBorder.x = WORLDX / 2 + (playerBorder.x - WORLDX / 2) / Math.abs(playerBorder.x - WORLDX / 2) * (WORLDX / 2 - WORMWIDTH / 2)
+		playerBorder.x = WORLDX / 2 + (playerBorder.x - WORLDX / 2) / Math.abs(playerBorder.x - WORLDX / 2) * (WORLDX / 2 - WORMWIDTH / 2);
 
-		if (playerBorder.x == tailBorderSegments[firstSegment].x) {
+		if (playerBorder.x == tailBorderSegments[headSprite].x) {
 			movingX = false;
 		}
 
 	}
 
-	//fixx t5his here world 
 
-	if (Math.abs(playerBorder.y - (SKYHEIGHT + (WORLDY-SKYHEIGHT) / 2)) + WORMWIDTH / 2 > (WORLDY-SKYHEIGHT) / 2) {
+	// y constraint - triggers if the player tries to go out of the top or bottom of the playable area
+	if (Math.abs(playerBorder.y - (SKYHEIGHT + WORLDY - WORMWIDTH) / 2) + WORMWIDTH / 2
+		// if
+		// the difference between the player's y: 			playerBorder.y
+		// and the center of the playable vertical area: 	(SKYHEIGHT+WORLDY-WORMWIDTH)/2   
+		// (wormwidth is so the worm can go out of the grass but stay on the surface)
+		// plus the radius of the sprite (so the worm won't go partly off the screen)
+		> (WORLDY - SKYHEIGHT + WORMWIDTH) / 2)
+	// is greater than the distance from the center to the top or bottom of the playable area
+	// (wormwidth is so the worm can go out of the grass but stay on the surface)
 
-		playerBorder.y = (SKYHEIGHT + (WORLDY-SKYHEIGHT) / 2) + (playerBorder.y - WORLDY / 2) / Math.abs(playerBorder.y - WORLDY / 2) * (WORLDY / 2 - WORMWIDTH / 2)
-
-		if (playerBorder.y == tailBorderSegments[firstSegment].y) {
+	{	//then
+		playerBorder.y =
+			//the player's y equals
+			(playerBorder.y - (SKYHEIGHT + WORLDY - WORMWIDTH) / 2)
+			// the distance the player is vertically from the center
+			/ Math.abs(playerBorder.y - (SKYHEIGHT + WORLDY - WORMWIDTH) / 2)
+			// divided by abs of the distance 
+			// this gives -1 if in the top half of the world and 1 if in the bottom half
+			* ((WORLDY - SKYHEIGHT) / 2)
+			// times half the vertical playable area
+			// this multiplied by the half the player is in gives the distance from the center to the top or bottom edge the player is at
+			+ (SKYHEIGHT + WORLDY - WORMWIDTH) / 2;
+		// plus the center of the playable vertical area
+		// sets the player's y to the top or bottom edge of the playable area depending on what half the player is in
+		
+		if (playerBorder.y == tailBorderSegments[headSprite].y) {
+			// if the parent if (player is trying to go out the top or bottom of the playable area) is true then check if player was in the same position last frame
 			movingY = false;
+			// if true then set movingY to false
+			// if not true then this is the first frame in which the player is going into the wall and it is still moving, just not as far as it would usually.
 		}
 
 	}
@@ -283,20 +305,20 @@ function moveCamera(percentPerFrame) {
 
 
 function moveTail() {
-	tailSegments[lastSegment].x = player.x;
-	tailSegments[lastSegment].y = player.y;
+	tailSegments[tailSprite].x = player.x;
+	tailSegments[tailSprite].y = player.y;
 
-	tailBorderSegments[lastSegment].x = player.x;
-	tailBorderSegments[lastSegment].y = player.y;
+	tailBorderSegments[tailSprite].x = player.x;
+	tailBorderSegments[tailSprite].y = player.y;
 
-	lastSegment++;
-	if (lastSegment == WORMLENGTH) {
-		lastSegment = 0;
+	tailSprite++;
+	if (tailSprite == WORMLENGTH) {
+		tailSprite = 0;
 	}
 
-	firstSegment++;
-	if (firstSegment == WORMLENGTH) {
-		firstSegment = 0;
+	headSprite++;
+	if (headSprite == WORMLENGTH) {
+		headSprite = 0;
 	}
 }
 
