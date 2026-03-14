@@ -1,8 +1,12 @@
+const FPS = 60;
+
 const WORLDX = 10000;
 
 const WORLDY = 10000;
 
-const SKYHEIGHT = 1300;
+const SKYHEIGHT = 600;
+
+const GRASSHEIGHT = 100;
 
 const WORMLENGTH = 67;
 
@@ -10,7 +14,15 @@ const WORMWIDTH = 52;
 
 const WORMSPEED = 5;
 
-const FOODSPACING = 1000 ** 2;
+const FOODWIDTH = 50;
+
+const MINFOODSEPERATION = 40;
+
+const INITIALFOODDENSITY = 2000 ** 2;
+
+const INITIALFOODPERSECOND = 1;
+const MINFOODPERSECOND = 0.1;
+const FOODABUNDANCE = 1000;
 
 const WORLDSEED = 112358;
 
@@ -32,15 +44,22 @@ let faceSprite;
 
 let foodGroup;
 
+
+let gameState='game';
+let gameFrame = 0;
+
+let foodToSpawn = 0;
+
 let headSprite = WORMLENGTH - 1;
 let tailSprite = 0;
 
 let tailSegments = [];
 let tailBorderSegments = [];
 
+let foodLocations = [];
 
 
-// make sky half the height
+
 
 /******************
 preload
@@ -60,7 +79,7 @@ setup
 *****************/
 
 function setup() {
-	frameRate(60);
+	frameRate(FPS);
 
 	randomSeed(WORLDSEED);
 
@@ -88,7 +107,7 @@ function setup() {
 
 function wormSetup() {
 
-	playerBorder = new Sprite(500, 1500, WORMWIDTH);
+	playerBorder = new Sprite(3000, 900, WORMWIDTH);
 
 	playerBorder.strokeWeight = 0;
 
@@ -140,10 +159,8 @@ function initialFoodSetup() {
 
 	foodGroup = new Group();
 
-	for (let i = 0; i < WORLDX * WORLDY / FOODSPACING; i++) {
-// add grass constraint
-		let foodItem = new Sprite(random(WORLDX), random(SKYHEIGHT, WORLDY), "n");
-		foodGroup.add(foodItem);
+	for (let i = 0; i < WORLDX * WORLDY / INITIALFOODDENSITY; i++) {
+		newFood();
 	}
 }
 
@@ -152,15 +169,27 @@ drawFunc
 *****************/
 
 function draw() {
-
 	background('green');
-
-	playerMove(WORMSPEED);
-
-	moveCamera(10);
+	if (gameState == 'start') {
+		startScreen();
+	} else if (gameState == 'game') {
+		gameScreen();
+	} else if (gameScreen == 'end') {
+		endScreen();
+	}
 
 }
 
+function startScreen() { }
+
+function gameScreen() {
+	gameFrame++;
+	playerMove(WORMSPEED);
+	moveCamera(10);
+	spawnFood();
+}
+
+function endScreen() { }
 
 function playerMove(speed) {
 
@@ -250,7 +279,7 @@ function playerMove(speed) {
 			+ (SKYHEIGHT + WORLDY - WORMWIDTH) / 2;
 		// plus the center of the playable vertical area
 		// sets the player's y to the top or bottom edge of the playable area depending on what half the player is in
-		
+
 		if (playerBorder.y == tailBorderSegments[headSprite].y) {
 			// if the parent if (player is trying to go out the top or bottom of the playable area) is true then check if player was in the same position last frame
 			movingY = false;
@@ -316,5 +345,39 @@ function moveTail() {
 
 
 function spawnFood() {
+	foodToSpawn += (FOODABUNDANCE * (INITIALFOODPERSECOND - MINFOODPERSECOND)) / (gameFrame * (INITIALFOODPERSECOND - MINFOODPERSECOND) + FPS * FOODABUNDANCE) + MINFOODPERSECOND / FPS;
+	while (foodToSpawn >= 1) {
+		foodToSpawn += -1;
+		newFood();
+	}
 
+}
+
+
+function newFood() {
+	let repeat = true;
+	let x
+	let y
+	while (repeat) {
+		repeat = false;
+		x = random(FOODWIDTH, WORLDX - FOODWIDTH);
+		y = random(SKYHEIGHT + GRASSHEIGHT + FOODWIDTH, WORLDY - FOODWIDTH);
+
+		for (let i2 = 0; i2 < foodLocations.length; i2++) {
+
+			if (Math.max(Math.abs(foodLocations[i2].x - x), Math.abs(foodLocations[i2].y - y)) < FOODWIDTH + MINFOODSEPERATION) {
+				repeat = true;
+
+			}
+		}
+
+
+	}
+
+	let foodItem = new Sprite(x, y, FOODWIDTH, "n");
+
+
+	foodLocations.push(foodItem);
+
+	foodGroup.add(foodItem);
 }
