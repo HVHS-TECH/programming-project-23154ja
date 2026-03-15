@@ -50,7 +50,7 @@ let gameFrame = 0;
 
 let foodToSpawn = 0;
 
-let headSprite = WORMLENGTH - 1;
+let lastFrameHeadSprite = WORMLENGTH - 2;
 let tailSprite = 0;
 
 let tailSegments = [];
@@ -114,7 +114,7 @@ function wormSetup() {
 
 	playerBorder.color = "black";
 
-	playerBorder.layer = 1;
+	playerBorder.layer = 5;
 
 
 	player = new Sprite(playerBorder.x, playerBorder.y, WORMWIDTH - 2, "n");
@@ -125,7 +125,7 @@ function wormSetup() {
 
 	player.strokeWeight = 0;
 
-	player.layer = 9;
+	player.layer = 10;
 
 
 
@@ -133,7 +133,7 @@ function wormSetup() {
 
 		let tailBorder = new Sprite(player.x + (i - WORMLENGTH) * WORMSPEED, player.y, WORMWIDTH, "n");
 
-		tailBorder.layer = 1;
+		tailBorder.layer = 5;
 
 		tailBorder.color = "black";
 
@@ -145,7 +145,7 @@ function wormSetup() {
 
 		let tail = new Sprite(player.x + (i - WORMLENGTH) * WORMSPEED, player.y, WORMWIDTH - 2, "n");
 
-		tail.layer = 2;
+		tail.layer = 7;
 
 		tail.color = "salmon";
 
@@ -198,6 +198,8 @@ function playerMove(speed) {
 	let movingY = true;
 	let xDirection = 0;
 	let yDirection = 0;
+	let toMoveX = 0;
+	let toMoveY = 0;
 
 	if (kb.pressing('left') && !kb.pressing('right')) {
 		xDirection = -1;
@@ -229,26 +231,27 @@ function playerMove(speed) {
 		movingY = false;
 	}
 
-
-	if (playerBorder.y == tailBorderSegments[headSprite].y) {
-		playerBorder.x += xDirection * speed;
+	if (playerBorder.y == tailBorderSegments[lastFrameHeadSprite].y) {
+		toMoveX += xDirection * speed;
 	} else {
-		playerBorder.x += xDirection * Math.sqrt(speed ** 2 / 2);
+		toMoveX += xDirection * Math.sqrt(speed ** 2 / 2);
 	}
 
-	if (playerBorder.x == tailBorderSegments[headSprite].x) {
-		playerBorder.y += yDirection * speed;
+	if (playerBorder.x == tailBorderSegments[lastFrameHeadSprite].x) {
+		toMoveY += yDirection * speed;
 	} else {
-		playerBorder.y += yDirection * Math.sqrt(speed ** 2 / 2)
+		toMoveY += yDirection * Math.sqrt(speed ** 2 / 2);
 	}
 
+	playerBorder.x += toMoveX;
+	playerBorder.y += toMoveY;
 
 
 	if (Math.abs(playerBorder.x - WORLDX / 2) + WORMWIDTH / 2 > WORLDX / 2) {
 
 		playerBorder.x = WORLDX / 2 + (playerBorder.x - WORLDX / 2) / Math.abs(playerBorder.x - WORLDX / 2) * (WORLDX / 2 - WORMWIDTH / 2);
 
-		if (playerBorder.x == tailBorderSegments[headSprite].x) {
+		if (playerBorder.x == tailBorderSegments[lastFrameHeadSprite].x) {
 			movingX = false;
 		}
 
@@ -281,7 +284,7 @@ function playerMove(speed) {
 		// plus the center of the playable vertical area
 		// sets the player's y to the top or bottom edge of the playable area depending on what half the player is in
 
-		if (playerBorder.y == tailBorderSegments[headSprite].y) {
+		if (playerBorder.y == tailBorderSegments[lastFrameHeadSprite].y) {
 			// if the parent if (player is trying to go out the top or bottom of the playable area) is true then check if player was in the same position last frame
 			movingY = false;
 			// if true then set movingY to false
@@ -338,9 +341,9 @@ function moveTail() {
 		tailSprite = 0;
 	}
 
-	headSprite++;
-	if (headSprite == WORMLENGTH) {
-		headSprite = 0;
+	lastFrameHeadSprite++;
+	if (lastFrameHeadSprite == WORMLENGTH) {
+		lastFrameHeadSprite = 0;
 	}
 }
 
@@ -382,7 +385,7 @@ function newFood(spawnOnScreen) {
 	}
 
 	let foodItem = new Sprite(x, y, FOODWIDTH, "n");
-
+	foodItem.layer = 1;
 
 	foodLocations.push(foodItem);
 
