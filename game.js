@@ -194,11 +194,13 @@ function gameScreen() {
 				foodLocations[i].remove();
 				foodLocations.splice(i, 1);
 				//check if this works
-				energy += -1;
-				console.log(energy);
+				energy += 100;
+				
 			}
 		}
 	}
+	energy += -1;
+	console.log(energy);
 
 	playerMove(WORMSPEED);
 	moveCamera(10);
