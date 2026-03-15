@@ -45,7 +45,7 @@ let faceSprite;
 let foodGroup;
 
 
-let gameState='game';
+let gameState = 'game';
 let gameFrame = 0;
 
 let foodToSpawn = 0;
@@ -97,10 +97,11 @@ function setup() {
 
 	wormSetup();
 
-	initialFoodSetup();
-
 	camera.x = player.x;
 	camera.y = player.y;
+
+	initialFoodSetup();
+
 
 }
 
@@ -160,7 +161,7 @@ function initialFoodSetup() {
 	foodGroup = new Group();
 
 	for (let i = 0; i < WORLDX * WORLDY / INITIALFOODDENSITY; i++) {
-		newFood();
+		newFood(true);
 	}
 }
 
@@ -174,7 +175,7 @@ function draw() {
 		startScreen();
 	} else if (gameState == 'game') {
 		gameScreen();
-	} else if (gameScreen == 'end') {
+	} else if (gameState == 'end') {
 		endScreen();
 	}
 
@@ -348,13 +349,13 @@ function spawnFood() {
 	foodToSpawn += (FOODABUNDANCE * (INITIALFOODPERSECOND - MINFOODPERSECOND)) / (gameFrame * (INITIALFOODPERSECOND - MINFOODPERSECOND) + FPS * FOODABUNDANCE) + MINFOODPERSECOND / FPS;
 	while (foodToSpawn >= 1) {
 		foodToSpawn += -1;
-		newFood();
+		newFood(false);
 	}
 
 }
 
 
-function newFood() {
+function newFood(spawnOnScreen) {
 	let repeat = true;
 	let x
 	let y
@@ -362,12 +363,18 @@ function newFood() {
 		repeat = false;
 		x = random(FOODWIDTH, WORLDX - FOODWIDTH);
 		y = random(SKYHEIGHT + GRASSHEIGHT + FOODWIDTH, WORLDY - FOODWIDTH);
-
+		if (!spawnOnScreen) {
+			if (x >= camera.x - (windowWidth + FOODWIDTH) / 2 && x <= camera.x + (windowWidth + FOODWIDTH) / 2) {
+				if (y >= camera.y - (windowHeight + FOODWIDTH) / 2 && y <= camera.y + (windowHeight + FOODWIDTH) / 2) {
+					repeat = true;
+					continue;
+				}
+			}
+		}
 		for (let i2 = 0; i2 < foodLocations.length; i2++) {
-
 			if (Math.max(Math.abs(foodLocations[i2].x - x), Math.abs(foodLocations[i2].y - y)) < FOODWIDTH + MINFOODSEPERATION) {
 				repeat = true;
-
+				break;
 			}
 		}
 
