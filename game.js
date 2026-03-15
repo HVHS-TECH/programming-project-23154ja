@@ -22,7 +22,7 @@ const INITIALFOODDENSITY = 2000 ** 2;
 
 const INITIALFOODPERSECOND = 1;
 const MINFOODPERSECOND = 0.1;
-const FOODABUNDANCE = 1000;
+const FOODABUNDANCE = 100;
 
 const WORLDSEED = 112358;
 
@@ -52,6 +52,8 @@ let foodToSpawn = 0;
 
 let lastFrameHeadSprite = WORMLENGTH - 2;
 let tailSprite = 0;
+
+let energy = 100 * 60;
 
 let tailSegments = [];
 let tailBorderSegments = [];
@@ -185,9 +187,23 @@ function startScreen() { }
 
 function gameScreen() {
 	gameFrame++;
+
+	for (let i = 0; i < foodLocations.length; i++) {
+		if (playerBorder.x + WORMWIDTH / 2 >= foodLocations[i].x - FOODWIDTH / 2 && playerBorder.x - WORMWIDTH / 2 <= foodLocations[i].x + FOODWIDTH / 2) {
+			if (playerBorder.y + WORMWIDTH / 2 >= foodLocations[i].y - FOODWIDTH / 2 && playerBorder.y - WORMWIDTH / 2 <= foodLocations[i].y + FOODWIDTH / 2) {
+				foodLocations[i].remove();
+				foodLocations.splice(i, 1);
+				//check if this works
+				energy += -1;
+				console.log(energy);
+			}
+		}
+	}
+
 	playerMove(WORMSPEED);
 	moveCamera(10);
 	spawnFood();
+
 }
 
 function endScreen() { }
