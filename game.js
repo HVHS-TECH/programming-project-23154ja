@@ -1,12 +1,12 @@
 const FPS = 60;
 
-const WORLDX = 10000;
+const WORLDX = 8192;
 
-const WORLDY = 10000;
+const WORLDY = 8192;
 
-const SKYHEIGHT = 600;
+const SKYHEIGHT = 492;
 
-const GRASSHEIGHT = 100;
+const GRASSHEIGHT = 82;
 
 const WORMLENGTH = 67;
 
@@ -20,9 +20,9 @@ const MINFOODSEPERATION = 40;
 
 const INITIALFOODDENSITY = 2000 ** 2;
 
-const INITIALFOODPERSECOND = 1;
+const INITIALFOODPERSECOND = 0.4;
 const MINFOODPERSECOND = 0.1;
-const FOODABUNDANCE = 100;
+const FOODABUNDANCE = 10;
 
 const WORLDSEED = 112358;
 
@@ -53,7 +53,7 @@ let foodToSpawn = 0;
 let lastFrameHeadSprite = WORMLENGTH - 2;
 let tailSprite = 0;
 
-let energy = 100 * 60;
+let energy = 50 * 60;
 
 let tailSegments = [];
 let tailBorderSegments = [];
@@ -69,7 +69,7 @@ preload
 
 function preload() {
 
-	imgBG = loadImage('assets/images/background.png');
+	imgBG = loadImage('assets/images/background.webp');
 
 	imgFace = loadImage('assets/images/face.png');
 
@@ -89,7 +89,7 @@ function setup() {
 
 	pixelDensity(1);
 
-	imgBG.resize(WORLDX, WORLDY);
+	//imgBG.resize(WORLDX, WORLDY);
 
 	cnv = new Canvas(windowWidth, windowHeight);
 
@@ -194,8 +194,8 @@ function gameScreen() {
 				foodLocations[i].remove();
 				foodLocations.splice(i, 1);
 				//check if this works
-				energy += 100;
-				
+				energy += 5 * 60;
+
 			}
 		}
 	}
