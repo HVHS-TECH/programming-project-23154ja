@@ -189,14 +189,12 @@ function gameScreen() {
 	gameFrame++;
 
 	for (let i = 0; i < foodLocations.length; i++) {
-		if (playerBorder.x + WORMWIDTH / 2 >= foodLocations[i].x - FOODWIDTH / 2 && playerBorder.x - WORMWIDTH / 2 <= foodLocations[i].x + FOODWIDTH / 2) {
-			if (playerBorder.y + WORMWIDTH / 2 >= foodLocations[i].y - FOODWIDTH / 2 && playerBorder.y - WORMWIDTH / 2 <= foodLocations[i].y + FOODWIDTH / 2) {
-				foodLocations[i].remove();
-				foodLocations.splice(i, 1);
-				//check if this works
-				energy += 5 * 60;
-
-			}
+		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - WORMSPEED) {
+			foodLocations[i].life=60;
+			//cahngfe
+			foodLocations.splice(i, 1);
+			//check if this works
+			energy += 5 * 60;
 		}
 	}
 	energy += -1;
@@ -344,6 +342,7 @@ function moveCamera(percentPerFrame) {
 		camera.y = WORLDY / 2 + (camera.y - WORLDY / 2) / Math.abs(camera.y - WORLDY / 2) * (WORLDY / 2 - windowHeight / 2)
 
 	}
+
 }
 
 
