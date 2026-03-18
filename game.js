@@ -187,23 +187,10 @@ function startScreen() { }
 
 function gameScreen() {
 	gameFrame++;
-
-	for (let i = 0; i < foodLocations.length; i++) {
-		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - WORMSPEED) {
-			foodLocations[i].life=60;
-			//cahngfe
-			foodLocations.splice(i, 1);
-			//check if this works
-			energy += 5 * 60;
-		}
-	}
-	energy += -1;
-	console.log(energy);
-
+	hungerLogic();
 	playerMove(WORMSPEED);
 	moveCamera(10);
 	spawnFood();
-
 }
 
 function endScreen() { }
@@ -248,15 +235,15 @@ function playerMove(speed) {
 	}
 
 	if (playerBorder.y == tailBorderSegments[lastFrameHeadSprite].y) {
-		toMoveX += xDirection * speed;
+		toMoveX = xDirection * speed;
 	} else {
-		toMoveX += xDirection * Math.sqrt(speed ** 2 / 2);
+		toMoveX = xDirection * Math.sqrt(speed ** 2 / 2);
 	}
 
 	if (playerBorder.x == tailBorderSegments[lastFrameHeadSprite].x) {
-		toMoveY += yDirection * speed;
+		toMoveY = yDirection * speed;
 	} else {
-		toMoveY += yDirection * Math.sqrt(speed ** 2 / 2);
+		toMoveY = yDirection * Math.sqrt(speed ** 2 / 2);
 	}
 
 	playerBorder.x += toMoveX;
@@ -318,7 +305,6 @@ function playerMove(speed) {
 	}
 
 }
-
 
 
 function windowResized() {
@@ -397,8 +383,6 @@ function newFood(spawnOnScreen) {
 				break;
 			}
 		}
-
-
 	}
 
 	let foodItem = new Sprite(x, y, FOODWIDTH, "n");
@@ -407,4 +391,18 @@ function newFood(spawnOnScreen) {
 	foodLocations.push(foodItem);
 
 	foodGroup.add(foodItem);
+}
+
+
+function hungerLogic() {
+	for (let i = 0; i < foodLocations.length; i++) {
+		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - WORMSPEED) {
+			foodLocations[i].life = 5;
+			foodLocations.splice(i, 1);
+			//check if this works
+			energy += 5 * 60;
+		}
+	}
+	energy += -1;
+	console.log(energy);
 }
