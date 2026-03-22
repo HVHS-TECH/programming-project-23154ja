@@ -397,7 +397,7 @@ function newFood(spawnOnScreen) {
 function hungerLogic() {
 	for (let i = 0; i < foodLocations.length; i++) {
 		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - WORMSPEED) {
-			foodLocations[i].life = 5;
+			foodLocations[i].life = 7;
 			foodLocations.splice(i, 1);
 			//check if this works
 			energy += 5 * 60;
