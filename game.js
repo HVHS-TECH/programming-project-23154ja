@@ -45,7 +45,7 @@ let faceSprite;
 let foodGroup;
 
 
-let gameState = 'game';
+let gameState = 'start';
 let gameFrame;
 
 let foodToSpawn;
@@ -89,33 +89,13 @@ function setup() {
 
 	pixelDensity(1);
 
-	gameSetup();
-	//move later
+	cnv = new Canvas(windowWidth, windowHeight);
 
 }
 
 
+function gameScreenSetup() {
 
-/******************
-drawFunc
-*****************/
-
-function draw() {
-	background('green');
-	if (gameState == 'start') {
-		startScreen();
-	} else if (gameState == 'game') {
-		gameScreen();
-	} else if (gameState == 'end') {
-		endScreen();
-	}
-
-}
-
-function startScreen() { }
-
-function gameSetup() {
-	
 
 	//reset vars
 	gameFrame = 0;
@@ -127,10 +107,6 @@ function gameSetup() {
 	tailBorderSegments = [];
 	foodLocations = [];
 
-
-	//imgBG.resize(WORLDX, WORLDY);
-
-	cnv = new Canvas(windowWidth, windowHeight);
 
 	bgSprite = new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
 	bgSprite.image = imgBG;
@@ -206,12 +182,41 @@ function initialFoodSetup() {
 	}
 }
 
+/******************
+drawFunc
+*****************/
+
+function draw() {
+	background('green');
+	if (gameState == 'start') {
+		startScreen();
+	} else if (gameState == 'game') {
+		gameScreen();
+	} else if (gameState == 'end') {
+		endScreen();
+	}
+
+}
+
+function startScreen() {
+	if (mouse.pressing()) {
+		gameState = 'game';
+		gameScreenSetup();
+	}
+}
+
+
 function gameScreen() {
-	gameFrame++;
-	hungerLogic();
-	playerMove(WORMSPEED);
-	moveCamera(10);
-	spawnFood();
+	if (mouse.presses()) {
+		pause = !pause;
+	}
+	if (!pause) {
+		gameFrame++;
+		hungerLogic();
+		playerMove(WORMSPEED);
+		moveCamera(10);
+		spawnFood();
+	}
 }
 
 function endScreen() { }
@@ -417,8 +422,8 @@ function newFood(spawnOnScreen) {
 
 function hungerLogic() {
 	for (let i = 0; i < foodLocations.length; i++) {
-		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - WORMSPEED) {
-			foodLocations[i].life = 7;
+		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - 7) {
+			foodLocations[i].life = 6;
 			foodLocations.splice(i, 1);
 			//check if this works
 			energy += 5 * 60;
