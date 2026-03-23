@@ -46,14 +46,14 @@ let foodGroup;
 
 
 let gameState = 'game';
-let gameFrame = 0;
+let gameFrame;
 
-let foodToSpawn = 0;
+let foodToSpawn;
 
-let lastFrameHeadSprite = WORMLENGTH - 2;
-let tailSprite = 0;
+let lastFrameHeadSprite;
+let tailSprite;
 
-let energy = 50 * 60;
+let energy;
 
 let tailSegments = [];
 let tailBorderSegments = [];
@@ -88,6 +88,45 @@ function setup() {
 	noSmooth();
 
 	pixelDensity(1);
+
+	gameSetup();
+	//move later
+
+}
+
+
+
+/******************
+drawFunc
+*****************/
+
+function draw() {
+	background('green');
+	if (gameState == 'start') {
+		startScreen();
+	} else if (gameState == 'game') {
+		gameScreen();
+	} else if (gameState == 'end') {
+		endScreen();
+	}
+
+}
+
+function startScreen() { }
+
+function gameSetup() {
+	
+
+	//reset vars
+	gameFrame = 0;
+	foodToSpawn = 0;
+	lastFrameHeadSprite = WORMLENGTH - 2;
+	tailSprite = 0;
+	energy = 50 * 60;
+	tailSegments = [];
+	tailBorderSegments = [];
+	foodLocations = [];
+
 
 	//imgBG.resize(WORLDX, WORLDY);
 
@@ -166,24 +205,6 @@ function initialFoodSetup() {
 		newFood(true);
 	}
 }
-
-/******************
-drawFunc
-*****************/
-
-function draw() {
-	background('green');
-	if (gameState == 'start') {
-		startScreen();
-	} else if (gameState == 'game') {
-		gameScreen();
-	} else if (gameState == 'end') {
-		endScreen();
-	}
-
-}
-
-function startScreen() { }
 
 function gameScreen() {
 	gameFrame++;
