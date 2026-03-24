@@ -209,7 +209,7 @@ function startScreen() {
 
 
 function gameScreen() {
-	if (mouse.presses()) {
+	if (kb.presses('p')) {
 		pause = !pause;
 	}
 	if (!pause) {
