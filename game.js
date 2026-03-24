@@ -47,6 +47,7 @@ let foodGroup;
 
 let gameState = 'start';
 let gameFrame;
+let pause;
 
 let foodToSpawn;
 
@@ -98,6 +99,7 @@ function gameScreenSetup() {
 
 
 	//reset vars
+	pause = false;
 	gameFrame = 0;
 	foodToSpawn = 0;
 	lastFrameHeadSprite = WORMLENGTH - 2;
@@ -214,9 +216,9 @@ function gameScreen() {
 		gameFrame++;
 		hungerLogic();
 		playerMove(WORMSPEED);
-		moveCamera(10);
 		spawnFood();
 	}
+	moveCamera(10);
 }
 
 function endScreen() { }
