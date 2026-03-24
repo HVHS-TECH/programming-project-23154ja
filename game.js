@@ -4,6 +4,10 @@ const WORLDX = 8192;
 
 const WORLDY = 8192;
 
+const buttonWidth = 60;
+
+const buttonMargin = 10;
+
 const SKYHEIGHT = 492;
 
 const GRASSHEIGHT = 82;
@@ -44,10 +48,16 @@ let faceSprite;
 
 let foodGroup;
 
+let pauseButton;
+
+let resetButton;
+
+let homeButton;
+
 
 let gameState = 'start';
 let gameFrame;
-let pause;
+let isPaused;
 
 let foodToSpawn;
 
@@ -91,15 +101,13 @@ function setup() {
 	pixelDensity(1);
 
 	cnv = new Canvas(windowWidth, windowHeight);
-
 }
 
 
 function gameScreenSetup() {
 
-
 	//reset vars
-	pause = false;
+	isPaused = false;
 	gameFrame = 0;
 	foodToSpawn = 0;
 	lastFrameHeadSprite = WORMLENGTH - 2;
@@ -119,9 +127,9 @@ function gameScreenSetup() {
 	camera.x = player.x;
 	camera.y = player.y;
 
+	buttonSetup();
+
 	initialFoodSetup();
-
-
 }
 
 
@@ -175,6 +183,16 @@ function wormSetup() {
 	}
 }
 
+function buttonSetup() {
+	pauseButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
+
+	resetButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonWidth - 2 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
+	resetButton.visible = false;
+
+	homeButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
+	homeButton.visible = false;
+}
+
 function initialFoodSetup() {
 
 	foodGroup = new Group();
@@ -210,15 +228,21 @@ function startScreen() {
 
 function gameScreen() {
 	if (kb.presses('p')) {
-		pause = !pause;
+		isPaused = !isPaused;
 	}
-	if (!pause) {
+	if (!isPaused) {
 		gameFrame++;
 		hungerLogic();
 		playerMove(WORMSPEED);
 		spawnFood();
+		resetButton.visible = false;
+		homeButton.visible = false;
+	} else {
+		resetButton.visible = true;
+		homeButton.visible = true;
 	}
 	moveCamera(10);
+	moveButtons();
 }
 
 function endScreen() { }
@@ -359,6 +383,16 @@ function moveCamera(percentPerFrame) {
 
 }
 
+function moveButtons() {
+	pauseButton.x = camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin;
+	pauseButton.y = camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin;
+
+	resetButton.x = camera.x + (windowWidth - buttonWidth) / 2 - buttonWidth - 2 * buttonMargin;
+	resetButton.y = camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin;
+
+	homeButton.x = camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin;
+	homeButton.y = camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin;
+}
 
 function moveTail() {
 	tailSegments[tailSprite].x = player.x;
