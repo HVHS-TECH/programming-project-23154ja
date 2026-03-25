@@ -38,6 +38,8 @@ let imgFace;
 
 let pauseImg;
 
+let playImg;
+
 let resetImg;
 
 let homeImg;
@@ -92,6 +94,8 @@ function preload() {
 
 	pauseImg = loadImage('assets/images/buttonImages/pause.png');
 
+	playImg = loadImage('assets/images/buttonImages/play.png');
+
 	resetImg = loadImage('assets/images/buttonImages/reset.png');
 
 	homeImg = loadImage('assets/images/buttonImages/home.png');
@@ -139,7 +143,7 @@ function gameScreenSetup() {
 	camera.x = player.x;
 	camera.y = player.y;
 
-	uiSetup();
+	uiGameSetup();
 
 	initialFoodSetup();
 }
@@ -192,7 +196,7 @@ function wormSetup() {
 	}
 }
 
-function uiSetup() {
+function uiGameSetup() {
 	pauseButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	pauseButton.image = pauseImg;
 
@@ -250,9 +254,11 @@ function gameScreen() {
 		spawnFood();
 		resetButton.visible = false;
 		homeButton.visible = false;
+		pauseButton.img=pauseImg;
 	} else {
 		resetButton.visible = true;
 		homeButton.visible = true;
+		pauseButton.img=playImg;
 	}
 	moveCamera(10);
 	moveButtons();
