@@ -36,6 +36,12 @@ let imgBG;
 
 let imgFace;
 
+let pauseImg;
+
+let resetImg;
+
+let homeImg;
+
 let bgSprite;
 
 let cnv;
@@ -83,6 +89,13 @@ function preload() {
 	imgBG = loadImage('assets/images/background.webp');
 
 	imgFace = loadImage('assets/images/face.png');
+
+	pauseImg = loadImage('assets/images/buttonImages/pause.png');
+
+	resetImg = loadImage('assets/images/buttonImages/reset.png');
+
+	homeImg = loadImage('assets/images/buttonImages/home.png');
+
 
 }
 
@@ -185,12 +198,16 @@ function wormSetup() {
 
 function buttonSetup() {
 	pauseButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
+pauseButton.image=pauseImg;
 
 	resetButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonWidth - 2 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
 	resetButton.visible = false;
+	resetButton.image=resetImg;
+
 
 	homeButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
 	homeButton.visible = false;
+	homeButton.image=homeImg;
 }
 
 function initialFoodSetup() {
@@ -227,7 +244,7 @@ function startScreen() {
 
 
 function gameScreen() {
-	if (kb.presses('p')) {
+	if (kb.presses('p')||pauseButton.mouse.presses()) {
 		isPaused = !isPaused;
 	}
 	if (!isPaused) {
