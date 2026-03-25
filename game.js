@@ -118,7 +118,6 @@ function setup() {
 
 
 function gameScreenSetup() {
-
 	//reset vars
 	isPaused = false;
 	gameFrame = 0;
@@ -140,14 +139,12 @@ function gameScreenSetup() {
 	camera.x = player.x;
 	camera.y = player.y;
 
-	buttonSetup();
+	uiSetup();
 
 	initialFoodSetup();
 }
 
-
 function wormSetup() {
-
 	playerBorder = new Sprite(3000, 900, WORMWIDTH);
 
 	playerBorder.strokeWeight = 0;
@@ -166,7 +163,6 @@ function wormSetup() {
 	player.strokeWeight = 0;
 
 	player.layer = 10;
-
 
 
 	for (let i = 1; i <= WORMLENGTH; i++) {
@@ -196,18 +192,18 @@ function wormSetup() {
 	}
 }
 
-function buttonSetup() {
-	pauseButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
-pauseButton.image=pauseImg;
+function uiSetup() {
+	pauseButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
+	pauseButton.image = pauseImg;
 
-	resetButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonWidth - 2 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
+	resetButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonWidth - 2 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	resetButton.visible = false;
-	resetButton.image=resetImg;
+	resetButton.image = resetImg;
 
 
-	homeButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "n");
+	homeButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	homeButton.visible = false;
-	homeButton.image=homeImg;
+	homeButton.image = homeImg;
 }
 
 function initialFoodSetup() {
@@ -236,7 +232,7 @@ function draw() {
 }
 
 function startScreen() {
-	if (mouse.pressing()) {
+	if (kb.presses('p')) {
 		gameState = 'game';
 		gameScreenSetup();
 	}
@@ -244,7 +240,7 @@ function startScreen() {
 
 
 function gameScreen() {
-	if (kb.presses('p')||pauseButton.mouse.presses()) {
+	if (kb.presses('p') || pauseButton.mouse.presses()) {
 		isPaused = !isPaused;
 	}
 	if (!isPaused) {
@@ -260,6 +256,13 @@ function gameScreen() {
 	}
 	moveCamera(10);
 	moveButtons();
+	if (homeButton.mouse.presses() && homeButton.visible) {
+		gameState = 'start'
+		allSprites.removeAll();
+	}else if (resetButton.mouse.presses()&&homeButton.visible){
+			allSprites.removeAll();
+			gameScreenSetup();
+	}
 }
 
 function endScreen() { }
