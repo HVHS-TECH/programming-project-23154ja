@@ -28,6 +28,9 @@ const INITIALFOODPERSECOND = 0.4;
 const MINFOODPERSECOND = 0.1;
 const FOODABUNDANCE = 10;
 
+const maxEnergy = 75 * 60;
+const initialEnergy = 50 * 60; 
+
 const WORLDSEED = 112358;
 
 //p5 play vars
@@ -111,8 +114,6 @@ setup
 function setup() {
 	frameRate(FPS);
 
-	randomSeed(WORLDSEED);
-
 	noSmooth();
 
 	pixelDensity(1);
@@ -128,11 +129,12 @@ function gameScreenSetup() {
 	foodToSpawn = 0;
 	lastFrameHeadSprite = WORMLENGTH - 2;
 	tailSprite = 0;
-	energy = 50 * 60;
+	energy = initialEnergy;
 	tailSegments = [];
 	tailBorderSegments = [];
 	foodLocations = [];
 
+		randomSeed(WORLDSEED);
 
 	bgSprite = new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
 	bgSprite.image = imgBG;
@@ -208,6 +210,13 @@ function uiGameSetup() {
 	homeButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	homeButton.visible = false;
 	homeButton.image = homeImg;
+
+	hungerBar =new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-energy/maxEnergy)/2,buttonWidth-6,(windowHeight-buttonWidth-buttonMargin*11-6)*energy/maxEnergy, 'n');
+	hungerBar.layer=6;
+
+	hungerBarBackground = new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2,buttonWidth,windowHeight-buttonWidth-buttonMargin*11,'n');
+	hungerBarBackground.color= "black"; 
+	hungerBarBackground.layer=5;
 }
 
 function initialFoodSetup() {
@@ -418,6 +427,13 @@ function moveButtons() {
 
 	homeButton.x = camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin;
 	homeButton.y = camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin;
+
+hungerBarBackground.x=camera.x+(windowWidth-buttonWidth)/2-buttonMargin;
+hungerBarBackground.y=camera.y+(buttonWidth+buttonMargin)/2;
+
+hungerBar.x=hungerBarBackground.x;
+hungerBar.y=camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-energy/maxEnergy)/2;
+hungerBar.height=(windowHeight-buttonWidth-buttonMargin*11-6)*energy/maxEnergy;
 }
 
 function moveTail() {
