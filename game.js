@@ -30,6 +30,7 @@ const FOODABUNDANCE = 10;
 
 const maxEnergy = 64 * 60;
 const initialEnergy = 48 * 60; 
+const gameScreenDeathTime = 5;
 
 const WORLDSEED = 112358;
 
@@ -77,6 +78,8 @@ let tailSprite;
 
 let energy;
 let displayEnergy;
+let died;
+let diedTime;
 
 let tailSegments = [];
 let tailBorderSegments = [];
@@ -132,6 +135,7 @@ function gameScreenSetup() {
 	tailSprite = 0;
 	energy = initialEnergy;
 	displayEnergy = energy;
+	died = false;
 	tailSegments = [];
 	tailBorderSegments = [];
 	foodLocations = [];
@@ -153,7 +157,7 @@ function gameScreenSetup() {
 }
 
 function wormSetup() {
-	playerBorder = new Sprite(3000, 900, WORMWIDTH);
+	playerBorder = new Sprite(3000, 900, WORMWIDTH, 'n');
 
 	playerBorder.strokeWeight = 0;
 
@@ -255,6 +259,7 @@ function startScreen() {
 
 
 function gameScreen() {
+if (!died) {
 	if (kb.presses('p') || pauseButton.mouse.presses()) {
 		isPaused = !isPaused;
 	}
@@ -273,6 +278,12 @@ function gameScreen() {
 	}
 	moveCamera(10);
 	moveButtons(5);
+} else if (millis()>=diedTime+1000*gameScreenDeathTime){
+gameState='end';
+} else{
+	player.vel.y+=0.5;
+	tailSegments[WORMLENGTH-1].vel.y+=0.5;
+}
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start'
 		allSprites.removeAll();
@@ -503,7 +514,7 @@ function newFood(spawnOnScreen) {
 
 
 function hungerLogic() {
-	for (let i = 0; i < foodLocations.length; i++) {
+	for (let i = foodLocations.length - 1; i >= 0; i--) {
 		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - 7) {
 			foodLocations[i].life = 6;
 			foodLocations.splice(i, 1);
@@ -511,6 +522,33 @@ function hungerLogic() {
 			energy += 5 * 60;
 		}
 	}
-	energy += -1;
-	console.log(energy);
+	energy += -10;
+	displayEnergy+=-10;
+
+	if (energy >maxEnergy) {
+		energy = maxEnergy;
+
+	} else if (energy<=0) {
+		died=true;
+		diedTime=millis();
+		hungerBar.remove();
+
+		for (let i = 0; i < WORMLENGTH-1; i++) {
+			if(Math.floor(i%3)==1){
+				tailSegments[i].collider='d';
+				tailSegments[i].vel.x=random(-0.5,0.5);
+				tailSegments[i].vel.y=random(-0.5,0.5);
+
+			} else {
+		tailSegments[i].remove();
+			}
+			tailBorderSegments[i].remove();
+	}
+	tailBorderSegments[WORMLENGTH-1].remove();
+	tailSegments[WORMLENGTH-1].x=player.x;
+	tailSegments[WORMLENGTH-1].y=player.y;
+	tailSegments[WORMLENGTH-1].vel.y=-17;
+		playerBorder.remove();
+		player.vel.y=-17;
+	}
 }
