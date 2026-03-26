@@ -56,6 +56,7 @@ let homeImg;
 let bgSprite;
 
 let cnv;
+let overlay;
 
 let player;
 
@@ -91,10 +92,6 @@ let tailSegments = [];
 let tailBorderSegments = [];
 
 let foodLocations = [];
-
-
-// worm don't overlap energy bar
-// happy ok and meh only make happy bigger
 
 /******************
 preload
@@ -135,6 +132,13 @@ function setup() {
 	pixelDensity(1);
 
 	cnv = new Canvas(windowWidth, windowHeight);
+	
+	overlay=new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
+	overlay.color='grey';
+	overlay.opacity=0.5;
+	overlay.layer=5;
+	overlay.visible=false;
+
 }
 
 
@@ -157,7 +161,7 @@ function gameScreenSetup() {
 
 	bgSprite = new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
 	bgSprite.image = imgBG;
-	bgSprite.depth = 100;
+	bgSprite.layer = 0;
 
 	wormSetup();
 
@@ -176,7 +180,7 @@ function wormSetup() {
 
 	playerBorder.color = "black";
 
-	playerBorder.layer = 5;
+	playerBorder.layer = 2;
 
 
 	player = new Sprite(playerBorder.x, playerBorder.y, WORMWIDTH - 2, "n");
@@ -187,14 +191,14 @@ function wormSetup() {
 
 	player.strokeWeight = 0;
 
-	player.layer = 10;
+	player.layer = 4;
 
 
 	for (let i = 1; i <= WORMLENGTH; i++) {
 
 		let tailBorder = new Sprite(player.x + (i - WORMLENGTH) * WORMSPEED, player.y, WORMWIDTH, "n");
 
-		tailBorder.layer = 5;
+		tailBorder.layer = 2;
 
 		tailBorder.color = "black";
 
@@ -206,7 +210,7 @@ function wormSetup() {
 
 		let tail = new Sprite(player.x + (i - WORMLENGTH) * WORMSPEED, player.y, WORMWIDTH - 2, "n");
 
-		tail.layer = 7;
+		tail.layer = 3;
 
 		tail.color = "salmon";
 
@@ -220,25 +224,28 @@ function wormSetup() {
 function uiGameSetup() {
 	pauseButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	pauseButton.image = pauseImg;
+	pauseButton.layer = 6;
 
 	resetButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonWidth - 2 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	resetButton.visible = false;
 	resetButton.image = resetImg;
+	resetButton.layer=6;
 
 
 	homeButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	homeButton.visible = false;
 	homeButton.image = homeImg;
+	homeButton.layer=6;
 
 	colorMode(HSL, 360, 100, 100);
 	hungerBar =new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-displayEnergy/maxEnergy)/2,buttonWidth-6,(windowHeight-buttonWidth-buttonMargin*11-6)*displayEnergy/maxEnergy, 'n');
-	hungerBar.layer=6;
+	hungerBar.layer=7;
 	hungerBar.color=color(10+90*displayEnergy/maxEnergy,100, 50);
 	colorMode(RGB, 255);
 
 	hungerBarBackground = new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2,buttonWidth,windowHeight-buttonWidth-buttonMargin*11,'n');
 	hungerBarBackground.color= "black"; 
-	hungerBarBackground.layer=5;
+	hungerBarBackground.layer=6;
 }
 
 function initialFoodSetup() {
@@ -278,6 +285,7 @@ function gameScreen() {
 if (!died) {
 	if (kb.presses('p') || pauseButton.mouse.presses()) {
 		isPaused = !isPaused;
+		overlay.visible=!overlay.visible;
 	}
 	if (!isPaused) {
 		gameFrame++;
@@ -541,7 +549,6 @@ function newFood(spawnOnScreen) {
 
 
 function hungerLogic() {
-	let face;
 	for (let i = foodLocations.length - 1; i >= 0; i--) {
 		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - 7) {
 			foodLocations[i].life = 6;
@@ -552,16 +559,11 @@ function hungerLogic() {
 	}
 	energy += -1;
 	displayEnergy+=-1;
-face = Math.ceil(5*displayEnergy/maxEnergy);
-if (face == 1) {
-  player.img = imgFaceSad;
-} else if (face == 2) {
-  player.img = imgFaceMuffed;
-} else if (face == 3) {
+if (displayEnergy/maxEnergy <0.25) {
   player.img = imgFaceMeh;
-} else if (face == 4) {
+} else if (displayEnergy/maxEnergy <0.5) {
   player.img = imgFaceOk;
-} else if (face == 5) {
+} else {
   player.img = imgFaceHappy;
 }
 
