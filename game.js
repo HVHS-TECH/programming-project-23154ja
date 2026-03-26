@@ -28,8 +28,8 @@ const INITIALFOODPERSECOND = 0.4;
 const MINFOODPERSECOND = 0.1;
 const FOODABUNDANCE = 10;
 
-const maxEnergy = 75 * 60;
-const initialEnergy = 50 * 60; 
+const maxEnergy = 64 * 60;
+const initialEnergy = 48 * 60; 
 
 const WORLDSEED = 112358;
 
@@ -76,6 +76,7 @@ let lastFrameHeadSprite;
 let tailSprite;
 
 let energy;
+let displayEnergy;
 
 let tailSegments = [];
 let tailBorderSegments = [];
@@ -130,6 +131,7 @@ function gameScreenSetup() {
 	lastFrameHeadSprite = WORMLENGTH - 2;
 	tailSprite = 0;
 	energy = initialEnergy;
+	displayEnergy = energy;
 	tailSegments = [];
 	tailBorderSegments = [];
 	foodLocations = [];
@@ -211,7 +213,7 @@ function uiGameSetup() {
 	homeButton.visible = false;
 	homeButton.image = homeImg;
 
-	hungerBar =new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-energy/maxEnergy)/2,buttonWidth-6,(windowHeight-buttonWidth-buttonMargin*11-6)*energy/maxEnergy, 'n');
+	hungerBar =new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-displayEnergy/maxEnergy)/2,buttonWidth-6,(windowHeight-buttonWidth-buttonMargin*11-6)*displayEnergy/maxEnergy, 'n');
 	hungerBar.layer=6;
 
 	hungerBarBackground = new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2,buttonWidth,windowHeight-buttonWidth-buttonMargin*11,'n');
@@ -270,7 +272,7 @@ function gameScreen() {
 		pauseButton.img=playImg;
 	}
 	moveCamera(10);
-	moveButtons();
+	moveButtons(5);
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start'
 		allSprites.removeAll();
@@ -418,7 +420,7 @@ function moveCamera(percentPerFrame) {
 
 }
 
-function moveButtons() {
+function moveButtons(energyBarPercentPerFrame) {
 	pauseButton.x = camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin;
 	pauseButton.y = camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin;
 
@@ -431,9 +433,11 @@ function moveButtons() {
 hungerBarBackground.x=camera.x+(windowWidth-buttonWidth)/2-buttonMargin;
 hungerBarBackground.y=camera.y+(buttonWidth+buttonMargin)/2;
 
+displayEnergy += (energy - displayEnergy) * (energyBarPercentPerFrame / 100);
+
 hungerBar.x=hungerBarBackground.x;
-hungerBar.y=camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-energy/maxEnergy)/2;
-hungerBar.height=(windowHeight-buttonWidth-buttonMargin*11-6)*energy/maxEnergy;
+hungerBar.y=camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-displayEnergy/maxEnergy)/2;
+hungerBar.height=(windowHeight-buttonWidth-buttonMargin*11-6)*displayEnergy/maxEnergy;
 }
 
 function moveTail() {
