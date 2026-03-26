@@ -28,7 +28,7 @@ const INITIALFOODPERSECOND = 0.4;
 const MINFOODPERSECOND = 0.1;
 const FOODABUNDANCE = 10;
 
-const maxEnergy = 64 * 60;
+const maxEnergy = 58 * 60;
 const initialEnergy = 48 * 60; 
 const gameScreenDeathTime = 3;
 
@@ -180,7 +180,7 @@ function wormSetup() {
 
 	player.color = "salmon";
 
-	player.img = imgFaceOk;
+	player.img = imgFaceHappy;
 
 	player.strokeWeight = 0;
 
