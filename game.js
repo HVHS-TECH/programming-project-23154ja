@@ -93,7 +93,8 @@ let tailBorderSegments = [];
 let foodLocations = [];
 
 
-
+// worm don't overlap energy bar
+// happy ok and meh only make happy bigger
 
 /******************
 preload
