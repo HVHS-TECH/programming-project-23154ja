@@ -38,7 +38,12 @@ const WORLDSEED = 112358;
 
 let imgBG;
 
-let imgFace;
+let imgFaceHappy;
+let imgFaceOk;
+let imgFaceMeh;
+let imgFaceMuffed;
+let imgFaceSad;
+let imgFaceShock;
 
 let pauseImg;
 
@@ -97,7 +102,12 @@ function preload() {
 
 	imgBG = loadImage('assets/images/background.webp');
 
-	imgFace = loadImage('assets/images/face.png');
+	imgFaceHappy  = loadImage('assets/images/faces/happy.png');
+  imgFaceOk   = loadImage('assets/images/faces/ok.png');
+  imgFaceMeh    = loadImage('assets/images/faces/meh.png');
+  imgFaceMuffed = loadImage('assets/images/faces/muffed.png');
+  imgFaceSad    = loadImage('assets/images/faces/sad.png');
+imgFaceShock= loadImage('assets/images/faces/shock.png');
 
 	pauseImg = loadImage('assets/images/buttonImages/pause.png');
 
@@ -170,7 +180,7 @@ function wormSetup() {
 
 	player.color = "salmon";
 
-	player.img = imgFace;
+	player.img = imgFaceOk;
 
 	player.strokeWeight = 0;
 
@@ -520,6 +530,7 @@ function newFood(spawnOnScreen) {
 
 
 function hungerLogic() {
+	let face;
 	for (let i = foodLocations.length - 1; i >= 0; i--) {
 		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - 7) {
 			foodLocations[i].life = 6;
@@ -528,8 +539,20 @@ function hungerLogic() {
 			energy += 5 * 60;
 		}
 	}
-	energy += -1;
-	displayEnergy+=-1;
+	energy += -10;
+	displayEnergy+=-10;
+face = Math.ceil(5*displayEnergy/maxEnergy);
+if (face == 1) {
+  player.img = imgFaceSad;
+} else if (face == 2) {
+  player.img = imgFaceMuffed;
+} else if (face == 3) {
+  player.img = imgFaceMeh;
+} else if (face == 4) {
+  player.img = imgFaceOk;
+} else if (face == 5) {
+  player.img = imgFaceHappy;
+}
 
 	if (energy >maxEnergy) {
 		energy = maxEnergy;
@@ -556,5 +579,6 @@ function hungerLogic() {
 	tailSegments[WORMLENGTH-1].vel.y=-17;
 		playerBorder.remove();
 		player.vel.y=-17;
+		player.img=imgFaceShock;
 	}
 }
