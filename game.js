@@ -135,9 +135,10 @@ function setup() {
 	
 	overlay=new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
 	overlay.color='grey';
-	overlay.opacity=0.5;
-	overlay.layer=5;
-	overlay.visible=false;
+	overlay.opacity=1;
+	overlay.layer=7;
+		overlay.visible=true;
+
 
 }
 
@@ -169,6 +170,13 @@ function gameScreenSetup() {
 	camera.y = player.y;
 
 	uiGameSetup();
+
+	overlay.remove();
+	overlay=new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
+	overlay.color='grey';
+	overlay.opacity=0.5;
+	overlay.layer=7;
+	overlay.visible=false;
 
 	initialFoodSetup();
 }
@@ -224,28 +232,28 @@ function wormSetup() {
 function uiGameSetup() {
 	pauseButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	pauseButton.image = pauseImg;
-	pauseButton.layer = 6;
+	pauseButton.layer = 8;
 
 	resetButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - buttonWidth - 2 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	resetButton.visible = false;
 	resetButton.image = resetImg;
-	resetButton.layer=6;
+	resetButton.layer=8;
 
 
 	homeButton = new Sprite(camera.x + (windowWidth - buttonWidth) / 2 - 2 * buttonWidth - 3 * buttonMargin, camera.y - (windowHeight - buttonWidth) / 2 + buttonMargin, buttonWidth, buttonWidth, "k");
 	homeButton.visible = false;
 	homeButton.image = homeImg;
-	homeButton.layer=6;
+	homeButton.layer=8;
 
 	colorMode(HSL, 360, 100, 100);
 	hungerBar =new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-displayEnergy/maxEnergy)/2,buttonWidth-6,(windowHeight-buttonWidth-buttonMargin*11-6)*displayEnergy/maxEnergy, 'n');
-	hungerBar.layer=7;
+	hungerBar.layer=6;
 	hungerBar.color=color(10+90*displayEnergy/maxEnergy,100, 50);
 	colorMode(RGB, 255);
 
 	hungerBarBackground = new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2,buttonWidth,windowHeight-buttonWidth-buttonMargin*11,'n');
 	hungerBarBackground.color= "black"; 
-	hungerBarBackground.layer=6;
+	hungerBarBackground.layer=5;
 }
 
 function initialFoodSetup() {
@@ -315,6 +323,12 @@ score=Math.floor(gameFrame/6)-480;
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start'
 		allSprites.removeAll();
+		overlay=new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
+	overlay.color='grey';
+	overlay.opacity=1;
+	overlay.layer=7;
+	overlay.visible=true;
+
 	}else if (resetButton.mouse.presses()&&homeButton.visible){
 			allSprites.removeAll();
 			gameScreenSetup();
