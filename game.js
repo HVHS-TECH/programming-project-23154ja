@@ -30,7 +30,7 @@ const FOODABUNDANCE = 10;
 
 const maxEnergy = 64 * 60;
 const initialEnergy = 48 * 60; 
-const gameScreenDeathTime = 5;
+const gameScreenDeathTime = 3;
 
 const WORLDSEED = 112358;
 
@@ -217,8 +217,10 @@ function uiGameSetup() {
 	homeButton.visible = false;
 	homeButton.image = homeImg;
 
+	colorMode(HSL, 360, 100, 100);
 	hungerBar =new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-displayEnergy/maxEnergy)/2,buttonWidth-6,(windowHeight-buttonWidth-buttonMargin*11-6)*displayEnergy/maxEnergy, 'n');
 	hungerBar.layer=6;
+	hungerBar.color=color(10+90*displayEnergy/maxEnergy,100, 50);
 
 	hungerBarBackground = new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2,buttonWidth,windowHeight-buttonWidth-buttonMargin*11,'n');
 	hungerBarBackground.color= "black"; 
@@ -443,12 +445,16 @@ function moveButtons(energyBarPercentPerFrame) {
 
 hungerBarBackground.x=camera.x+(windowWidth-buttonWidth)/2-buttonMargin;
 hungerBarBackground.y=camera.y+(buttonWidth+buttonMargin)/2;
+hungerBarBackground.strokeWeight=0;
 
 displayEnergy += (energy - displayEnergy) * (energyBarPercentPerFrame / 100);
 
 hungerBar.x=hungerBarBackground.x;
 hungerBar.y=camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-displayEnergy/maxEnergy)/2;
 hungerBar.height=(windowHeight-buttonWidth-buttonMargin*11-6)*displayEnergy/maxEnergy;
+	hungerBar.color=color(10+90*displayEnergy/maxEnergy,100, 50);
+	hungerBar.strokeWeight=0;
+
 }
 
 function moveTail() {
@@ -522,8 +528,8 @@ function hungerLogic() {
 			energy += 5 * 60;
 		}
 	}
-	energy += -10;
-	displayEnergy+=-10;
+	energy += -1;
+	displayEnergy+=-1;
 
 	if (energy >maxEnergy) {
 		energy = maxEnergy;
