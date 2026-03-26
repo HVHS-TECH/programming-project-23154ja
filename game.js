@@ -85,6 +85,7 @@ let energy;
 let displayEnergy;
 let died;
 let diedTime;
+let score;
 
 let tailSegments = [];
 let tailBorderSegments = [];
@@ -146,6 +147,7 @@ function gameScreenSetup() {
 	energy = initialEnergy;
 	displayEnergy = energy;
 	died = false;
+	score=-480;
 	tailSegments = [];
 	tailBorderSegments = [];
 	foodLocations = [];
@@ -231,6 +233,7 @@ function uiGameSetup() {
 	hungerBar =new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-displayEnergy/maxEnergy)/2,buttonWidth-6,(windowHeight-buttonWidth-buttonMargin*11-6)*displayEnergy/maxEnergy, 'n');
 	hungerBar.layer=6;
 	hungerBar.color=color(10+90*displayEnergy/maxEnergy,100, 50);
+	colorMode(RGB, 255);
 
 	hungerBarBackground = new Sprite(camera.x+(windowWidth-buttonWidth)/2-buttonMargin,camera.y+(buttonWidth+buttonMargin)/2,buttonWidth,windowHeight-buttonWidth-buttonMargin*11,'n');
 	hungerBarBackground.color= "black"; 
@@ -298,6 +301,8 @@ gameState='end';
 	player.vel.y+=0.5;
 	tailSegments[WORMLENGTH-1].vel.y+=0.5;
 }
+score=Math.floor(gameFrame/6)-480;
+
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start'
 		allSprites.removeAll();
@@ -307,7 +312,9 @@ gameState='end';
 	}
 }
 
-function endScreen() { }
+function endScreen() {
+	console.log(score);
+}
 
 function playerMove(speed) {
 
@@ -461,12 +468,13 @@ hungerBarBackground.strokeWeight=0;
 
 displayEnergy += (energy - displayEnergy) * (energyBarPercentPerFrame / 100);
 
+	colorMode(HSL, 360, 100, 100);
 hungerBar.x=hungerBarBackground.x;
 hungerBar.y=camera.y+(buttonWidth+buttonMargin)/2+(windowHeight-buttonWidth-buttonMargin*11-6)*(1-displayEnergy/maxEnergy)/2;
 hungerBar.height=(windowHeight-buttonWidth-buttonMargin*11-6)*displayEnergy/maxEnergy;
 	hungerBar.color=color(10+90*displayEnergy/maxEnergy,100, 50);
 	hungerBar.strokeWeight=0;
-
+colorMode(RGB, 255);
 }
 
 function moveTail() {
