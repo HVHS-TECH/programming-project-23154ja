@@ -278,7 +278,9 @@ if (!died) {
 	if (!isPaused) {
 		gameFrame++;
 		hungerLogic();
+		if (!died){
 		playerMove(WORMSPEED);
+		}
 		spawnFood();
 		resetButton.visible = false;
 		homeButton.visible = false;
@@ -539,8 +541,8 @@ function hungerLogic() {
 			energy += 5 * 60;
 		}
 	}
-	energy += -10;
-	displayEnergy+=-10;
+	energy += -1;
+	displayEnergy+=-1;
 face = Math.ceil(5*displayEnergy/maxEnergy);
 if (face == 1) {
   player.img = imgFaceSad;
