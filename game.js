@@ -100,6 +100,7 @@ preload
 function preload() {
 
 	imgBG = loadImage('assets/images/background.webp');
+	wormLife = loadImage('assets/images/startScreen.png');
 
 	imgFaceHappy  = loadImage('assets/images/faces/happy.png');
   imgFaceOk   = loadImage('assets/images/faces/ok.png');
@@ -133,9 +134,8 @@ function setup() {
 
 	cnv = new Canvas(windowWidth, windowHeight);
 	
-	overlay=new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
-	overlay.color='grey';
-	overlay.opacity=1;
+	overlay=new Sprite(860, 540, 1920,1080, "n");
+	overlay.image = wormLife;
 	overlay.layer=7;
 		overlay.visible=true;
 
@@ -453,6 +453,12 @@ function playerMove(speed) {
 
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
+	if(gameState=='start'||gameState=='end') {
+		overlay.width=1920;
+		overlay.height=1080;
+		overlay.x = 540;
+    overlay.y = 860;
+	}
 };
 
 
