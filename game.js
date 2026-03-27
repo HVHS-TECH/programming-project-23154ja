@@ -40,6 +40,8 @@ let pauseImg;
 let playImg;
 let resetImg;
 let homeImg;
+let startImg;
+let helpImg;
 //p5 play sprite vars
 let bgSprite;
 let overlay;
@@ -49,6 +51,8 @@ let foodGroup;
 let pauseButton;
 let resetButton;
 let homeButton;
+let startButton;
+let helpButton;
 let digit1;
 let digit2;
 let digit3;
@@ -56,6 +60,8 @@ let digit4;
 //canvas var
 let cnv;
 let gameState = 'start';
+let clickTime;
+let startTransition;
 let gameFrame;
 let isPaused;
 let foodToSpawn;
@@ -98,6 +104,8 @@ function preload() {
 	playImg = loadImage('assets/images/buttonImages/play.png');
 	resetImg = loadImage('assets/images/buttonImages/reset.png');
 	homeImg = loadImage('assets/images/buttonImages/home.png');
+	startImg=loadImage('assets/images/buttonImages/start.png');
+	helpImg=loadImage('assets/images/buttonImages/howToPlay.png');
 }
 /******************
 setup
@@ -107,7 +115,15 @@ function setup() {
 	noSmooth();
 	pixelDensity(1);
 	cnv = new Canvas(windowWidth, windowHeight);
-	overlay = new Sprite(860, 540, 1920, 1080, "n");
+	startScreenSetup();
+}
+
+function startScreenSetup() {
+	allSprites.removeAll();
+	startTransition=false;
+		camera.x = windowWidth / 2;
+		camera.y = windowHeight / 2;
+overlay = new Sprite(860, 540, 1440, 1080, "n");
 	overlay.image = wormLife;
 	overlay.layer = 7;
 	overlay.visible = true;
@@ -120,6 +136,16 @@ function setup() {
 		overlay.x = windowWidth / 2;
 		overlay.y = windowHeight / 2;
 	}
+	startButton=new Sprite(overlay.x-400*overlay.scale, overlay.y+320*overlay.scale,384,192,'k');
+	startButton.layer=8;
+	startButton.image=startImg;
+	startButton.scale=overlay.scale*1.2;
+
+	
+	helpButton=new Sprite(overlay.x+250*overlay.scale, overlay.y+320*overlay.scale,384,192,'k');
+	helpButton.layer=8;
+	helpButton.image=helpImg;
+	helpButton.scale=overlay.scale*1.2;
 }
 
 function gameScreenSetup() {
@@ -208,8 +234,8 @@ function initialFoodSetup() {
 
 function endScreenSetup() {
 	allSprites.remove();
-	camera.x = canvas.width / 2;
-	camera.y = canvas.height / 2;
+	camera.x = windowWidth / 2;
+	camera.y = windowHeight / 2;
 	overlay = new Sprite(860, 540, 1920, 1080, "n");
 	overlay.image = wormDeath;
 	overlay.layer = 7;
@@ -264,10 +290,19 @@ function draw() {
 }
 
 function startScreen() {
-	if (kb.presses('p')) {
+	if(!startTransition){
+	if (startButton.mouse.presses()) {
+		clickTime=millis();
+		startTransition=true;
+	}
+	if (helpButton.mouse.presses()){
+			window.open('assets/images/instructions.svg', '_blank');
+	}
+}else if (millis()>clickTime+50) {
 		gameState = 'game';
 		gameScreenSetup();
 	}
+	
 }
 
 function gameScreen() {
@@ -303,22 +338,7 @@ function gameScreen() {
 	score = Math.floor(gameFrame / 6) - 480;
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start';
-		allSprites.removeAll();
-		camera.x = canvas.width / 2;
-		camera.y = canvas.height / 2;
-		overlay = new Sprite(860, 540, 1920, 1080, "n");
-		overlay.image = wormLife;
-		overlay.layer = 7;
-		overlay.visible = true;
-		if (windowWidth / 1440 < windowHeight / 1080) {
-			overlay.scale = windowWidth / 1440;
-			overlay.x = camera.x;
-			overlay.y = camera.y - windowHeight / 2 + overlay.scale * 540;
-		} else {
-			overlay.scale = windowHeight / 1080;
-			overlay.x = camera.x;
-			overlay.y = camera.y;
-		}
+		startScreenSetup();
 	} else if (resetButton.mouse.presses() && homeButton.visible) {
 		allSprites.removeAll();
 		gameScreenSetup();
@@ -328,22 +348,7 @@ function gameScreen() {
 function endScreen() {
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start';
-		allSprites.removeAll();
-		camera.x = canvas.width / 2;
-		camera.y = canvas.height / 2;
-		overlay = new Sprite(860, 540, 1920, 1080, "n");
-		overlay.image = wormLife;
-		overlay.layer = 7;
-		overlay.visible = true;
-		if (windowWidth / 1440 < windowHeight / 1080) {
-			overlay.scale = windowWidth / 1440;
-			overlay.x = camera.x;
-			overlay.y = camera.y - windowHeight / 2 + overlay.scale * 540;
-		} else {
-			overlay.scale = windowHeight / 1080;
-			overlay.x = camera.x;
-			overlay.y = camera.y;
-		}
+		startScreenSetup();
 	} else if (resetButton.mouse.presses() && homeButton.visible) {
 		allSprites.removeAll();
 		gameState = 'game';
@@ -442,6 +447,14 @@ function windowResized() {
 			overlay.x = windowWidth / 2;
 			overlay.y = windowHeight / 2;
 		}
+		startButton.x=overlay.x-400*overlay.scale;
+		startButton.y=overlay.y+320*overlay.scale;
+		startButton.scale=startButton.scale=overlay.scale*1.2;
+
+		helpButton.x=overlay.x+250*overlay.scale;
+		helpButton.y=overlay.y+320*overlay.scale;
+		helpButton.scale=startButton.scale=overlay.scale*1.2;
+
 	} else if (gameState == 'end') {
 		if (windowWidth / 1620 < windowHeight / 1440) {
 			overlay.scale = windowWidth / 1620;
