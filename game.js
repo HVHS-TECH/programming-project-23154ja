@@ -149,6 +149,7 @@ overlay = new Sprite(860, 540, 1440, 1080, "n");
 }
 
 function gameScreenSetup() {
+	allSprites.remove();
 	//reset vars
 	isPaused = false;
 	gameFrame = 0;
@@ -170,7 +171,6 @@ function gameScreenSetup() {
 	camera.x = player.x;
 	camera.y = player.y;
 	uiGameSetup();
-	overlay.remove();
 	overlay = new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
 	overlay.color = 'grey';
 	overlay.opacity = 0.5;
