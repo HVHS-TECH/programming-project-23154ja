@@ -47,7 +47,6 @@ let bgSprite;
 let overlay;
 let player;
 let playerBorder;
-let foodGroup;
 let pauseButton;
 let resetButton;
 let homeButton;
@@ -104,8 +103,8 @@ function preload() {
 	playImg = loadImage('assets/images/buttonImages/play.png');
 	resetImg = loadImage('assets/images/buttonImages/reset.png');
 	homeImg = loadImage('assets/images/buttonImages/home.png');
-	startImg=loadImage('assets/images/buttonImages/start.png');
-	helpImg=loadImage('assets/images/buttonImages/howToPlay.png');
+	startImg = loadImage('assets/images/buttonImages/start.png');
+	helpImg = loadImage('assets/images/buttonImages/howToPlay.png');
 }
 /******************
 setup
@@ -120,10 +119,10 @@ function setup() {
 
 function startScreenSetup() {
 	allSprites.removeAll();
-	startTransition=false;
-		camera.x = windowWidth / 2;
-		camera.y = windowHeight / 2;
-overlay = new Sprite(860, 540, 1440, 1080, "n");
+	startTransition = false;
+	camera.x = windowWidth / 2;
+	camera.y = windowHeight / 2;
+	overlay = new Sprite(860, 540, 1440, 1080, "n");
 	overlay.image = wormLife;
 	overlay.layer = 7;
 	overlay.visible = true;
@@ -136,20 +135,20 @@ overlay = new Sprite(860, 540, 1440, 1080, "n");
 		overlay.x = windowWidth / 2;
 		overlay.y = windowHeight / 2;
 	}
-	startButton=new Sprite(overlay.x-400*overlay.scale, overlay.y+320*overlay.scale,384,192,'k');
-	startButton.layer=8;
-	startButton.image=startImg;
-	startButton.scale=overlay.scale*1.2;
+	startButton = new Sprite(overlay.x - 400 * overlay.scale, overlay.y + 320 * overlay.scale, 384, 192, 'k');
+	startButton.layer = 8;
+	startButton.image = startImg;
+	startButton.scale = overlay.scale * 1.2;
 
-	
-	helpButton=new Sprite(overlay.x+250*overlay.scale, overlay.y+320*overlay.scale,384,192,'k');
-	helpButton.layer=8;
-	helpButton.image=helpImg;
-	helpButton.scale=overlay.scale*1.2;
+
+	helpButton = new Sprite(overlay.x + 250 * overlay.scale, overlay.y + 320 * overlay.scale, 384, 192, 'k');
+	helpButton.layer = 8;
+	helpButton.image = helpImg;
+	helpButton.scale = overlay.scale * 1.2;
 }
 
 function gameScreenSetup() {
-	allSprites.remove();
+	allSprites.removeAll();
 	//reset vars
 	isPaused = false;
 	gameFrame = 0;
@@ -226,14 +225,13 @@ function uiGameSetup() {
 }
 
 function initialFoodSetup() {
-	foodGroup = new Group();
 	for (let i = 0; i < WORLDX * WORLDY / INITIALFOODDENSITY; i++) {
 		newFood(true);
 	}
 }
 
 function endScreenSetup() {
-	allSprites.remove();
+	allSprites.removeAll();
 	camera.x = windowWidth / 2;
 	camera.y = windowHeight / 2;
 	overlay = new Sprite(860, 540, 1920, 1080, "n");
@@ -290,19 +288,19 @@ function draw() {
 }
 
 function startScreen() {
-	if(!startTransition){
-	if (startButton.mouse.presses()) {
-		clickTime=millis();
-		startTransition=true;
-	}
-	if (helpButton.mouse.presses()){
+	if (!startTransition) {
+		if (startButton.mouse.presses()) {
+			clickTime = millis();
+			startTransition = true;
+		}
+		if (helpButton.mouse.presses()) {
 			window.open('assets/images/instructions.svg', '_blank');
-	}
-}else if (millis()>clickTime+50) {
+		}
+	} else if (millis() > clickTime + 50) {
 		gameState = 'game';
 		gameScreenSetup();
 	}
-	
+
 }
 
 function gameScreen() {
@@ -447,13 +445,13 @@ function windowResized() {
 			overlay.x = windowWidth / 2;
 			overlay.y = windowHeight / 2;
 		}
-		startButton.x=overlay.x-400*overlay.scale;
-		startButton.y=overlay.y+320*overlay.scale;
-		startButton.scale=startButton.scale=overlay.scale*1.2;
+		startButton.x = overlay.x - 400 * overlay.scale;
+		startButton.y = overlay.y + 320 * overlay.scale;
+		startButton.scale = startButton.scale = overlay.scale * 1.2;
 
-		helpButton.x=overlay.x+250*overlay.scale;
-		helpButton.y=overlay.y+320*overlay.scale;
-		helpButton.scale=startButton.scale=overlay.scale*1.2;
+		helpButton.x = overlay.x + 250 * overlay.scale;
+		helpButton.y = overlay.y + 320 * overlay.scale;
+		helpButton.scale = startButton.scale = overlay.scale * 1.2;
 
 	} else if (gameState == 'end') {
 		if (windowWidth / 1620 < windowHeight / 1440) {
@@ -567,7 +565,6 @@ function newFood(spawnOnScreen) {
 	let foodItem = new Sprite(x, y, FOODWIDTH, "n");
 	foodItem.layer = 1;
 	foodLocations.push(foodItem);
-	foodGroup.add(foodItem);
 }
 
 function hungerLogic() {
