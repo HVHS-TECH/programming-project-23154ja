@@ -407,7 +407,7 @@ function gameScreen() {
 		//calls func to move camera
 		moveCamera(10);
 		//calls func to move buttons and energy bar
-		moveUiElements(5); 	
+		moveUiElements(5);
 	} else if (millis() >= diedTime + 1000 * GAMESCREENDEATHTIME) {
 		//if have been dead long enough for the death animation to play change to end screen
 		gameState = 'end';
@@ -418,7 +418,7 @@ function gameScreen() {
 		//this one tail segment is being the background for the head (the head is an image (outline of a face) and has no fill)
 		tailSegments[WORMLENGTH - 1].vel.y += 0.5;
 	}
-	//if clicking on the home or reset buttons then go home or reset
+	//if clicking on the home or reset buttons then go start or reload game
 	//only dispalyed when paused, can't die when paused, can't toggle pause during death animation
 	//therefore these don't need to have an if not dead check
 	if (homeButton.mouse.presses() && homeButton.visible) {
@@ -434,6 +434,7 @@ function gameScreen() {
 endScreen code - called in drawloop when the game is on the end screen
 *****************/
 function endScreen() {
+	//if clicking on the home or reset buttons then go to start screen or game screen
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start';
 		startScreenSetup();
