@@ -77,6 +77,7 @@ let numImgNames = [];
 let tailSegments = [];
 let tailBorderSegments = [];
 let foodLocations = [];
+
 /******************
 preload
 *****************/
@@ -110,6 +111,7 @@ function preload() {
 	//assign digits to an array for easy access
 	numImgNames = [No0, No1, No2, No3, No4, No5, No6, No7, No8, No9];
 }
+
 /******************
 setup
 *****************/
@@ -121,6 +123,9 @@ function setup() {
 	startScreenSetup();
 }
 
+/******************
+setup for the start screen
+*****************/
 function startScreenSetup() {
 	allSprites.removeAll();
 	startTransition = false;
@@ -151,6 +156,9 @@ function startScreenSetup() {
 	helpButton.scale = overlay.scale * 1.2;
 }
 
+/******************
+setup for the game screen
+*****************/
 function gameScreenSetup() {
 	allSprites.removeAll();
 	//reset vars
@@ -182,6 +190,9 @@ function gameScreenSetup() {
 	initialFoodSetup();
 }
 
+/******************
+subset of gameScreen setup for the worm
+*****************/
 function wormSetup() {
 	playerBorder = new Sprite(3000, 900, WORMWIDTH, 'n');
 	playerBorder.strokeWeight = 0;
@@ -206,6 +217,9 @@ function wormSetup() {
 	}
 }
 
+/******************
+subset of gameScreen setup for the ui
+*****************/
 function uiGameSetup() {
 	pauseButton = new Sprite(camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONMARGIN, camera.y - (windowHeight - BUTTONWIDTH) / 2 + BUTTONMARGIN, BUTTONWIDTH, BUTTONWIDTH, "k");
 	pauseButton.image = pauseImg;
@@ -228,12 +242,18 @@ function uiGameSetup() {
 	hungerBarBackground.layer = 5;
 }
 
+/******************
+subset of gameScreen setup for the initial food
+*****************/
 function initialFoodSetup() {
 	for (let i = 0; i < WORLDX * WORLDY / INITIALFOODDENSITY; i++) {
 		newFood(true);
 	}
 }
 
+/******************
+setup for the end screen
+*****************/
 function endScreenSetup() {
 	allSprites.removeAll();
 	camera.x = windowWidth / 2;
@@ -277,8 +297,9 @@ function endScreenSetup() {
 	homeButton.layer = 8;
 	homeButton.scale = 4 * overlay.scale;
 }
+
 /******************
-drawFunc
+drawloop - gameplay loop
 *****************/
 function draw() {
 	background('green');
@@ -291,6 +312,9 @@ function draw() {
 	}
 }
 
+/******************
+startScreen code - called in drawloop when the game is on the start screen
+*****************/
 function startScreen() {
 	if (!startTransition) {
 		if (startButton.mouse.presses()) {
@@ -307,6 +331,9 @@ function startScreen() {
 
 }
 
+/******************
+gameScreen code - called in drawloop when the game is on the game screen
+*****************/
 function gameScreen() {
 	if (!died) {
 		if (kb.presses('p') || pauseButton.mouse.presses()) {
@@ -329,7 +356,7 @@ function gameScreen() {
 			pauseButton.img = playImg;
 		}
 		moveCamera(10);
-		moveButtons(5);
+		moveUiElements(5);
 	} else if (millis() >= diedTime + 1000 * GAMESCREENDEATHTIME) {
 		gameState = 'end';
 		endScreenSetup();
@@ -347,6 +374,9 @@ function gameScreen() {
 	}
 }
 
+/******************
+endScreen code - called in drawloop when the game is on the end screen
+*****************/
 function endScreen() {
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start';
@@ -358,6 +388,9 @@ function endScreen() {
 	}
 }
 
+/******************
+handles the logic for the movement of the player sprites (the front segment of the worm), constraining it to the world bounds
+*****************/
 function playerMove(speed) {
 	let movingX = true;
 	let movingY = true;
@@ -437,6 +470,9 @@ function playerMove(speed) {
 	}
 }
 
+/******************
+triggers when the window size is altered, allowing for the code to reajust and recenter
+*****************/
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	if (gameState == 'start') {
@@ -489,6 +525,9 @@ function windowResized() {
 	}
 };
 
+/******************
+called in the drawloop, code to move the camera smoothly towards the player and not to show outside the world bounds
+*****************/
 function moveCamera(percentPerFrame) {
 	camera.x += (player.x - camera.x) * (percentPerFrame / 100)
 	camera.y += (player.y - camera.y) * (percentPerFrame / 100)
@@ -500,7 +539,10 @@ function moveCamera(percentPerFrame) {
 	}
 }
 
-function moveButtons(energyBarPercentPerFrame) {
+/******************
+code to move the ui in the gameScreen
+*****************/
+function moveUiElements(energyBarPercentPerFrame) {
 	pauseButton.x = camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONMARGIN;
 	pauseButton.y = camera.y - (windowHeight - BUTTONWIDTH) / 2 + BUTTONMARGIN;
 	resetButton.x = camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONWIDTH - 2 * BUTTONMARGIN;
@@ -520,6 +562,9 @@ function moveButtons(energyBarPercentPerFrame) {
 	colorMode(RGB, 255);
 }
 
+/******************
+moves the tail along behind the player sprites
+*****************/
 function moveTail() {
 	tailSegments[tailSprite].x = player.x;
 	tailSegments[tailSprite].y = player.y;
@@ -535,6 +580,9 @@ function moveTail() {
 	}
 }
 
+/******************
+logic to spawn food throughout the game (not initialy)
+*****************/
 function spawnFood() {
 	foodToSpawn += (FOODABUNDANCE * (INITIALFOODPERSECOND - MINFOODPERSECOND)) / (gameFrame * (INITIALFOODPERSECOND - MINFOODPERSECOND) + FPS * FOODABUNDANCE) + MINFOODPERSECOND / FPS;
 	while (foodToSpawn >= 1) {
@@ -543,6 +591,9 @@ function spawnFood() {
 	}
 }
 
+/******************
+func to spawn a piece of food, called many times during setup and also throughout the game
+*****************/
 function newFood(spawnOnScreen) {
 	let repeat = true;
 	let x
@@ -571,6 +622,9 @@ function newFood(spawnOnScreen) {
 	foodLocations.push(foodItem);
 }
 
+/******************
+logic managing the worm's hunger system including eating eating food and triggering the end of the game
+*****************/
 function hungerLogic() {
 	for (let i = foodLocations.length - 1; i >= 0; i--) {
 		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - 7) {
