@@ -304,7 +304,8 @@ function endScreenSetup() {
 	digit3.scale = digit1.scale;
 	digit4 = new Sprite(digit3.x + 90 * overlay.scale, digit1.y, 40, 70, 'n');
 	digit4.scale = digit1.scale;
-	//final check of score
+	//calculate score, -480 is the score you would get if you don't eat anything. - makes sure that the min score is 0
+	//also keeps score in the hundreds to thousends by increasing every tenth of a second instead of every frame (60th of a second)
 	score = Math.floor(gameFrame / 6) - 480;
 	//sets the digits to the right numbers using remander dividing
 	digit1.image = numImgNames[Math.floor(score / 1000) % 10];
@@ -368,36 +369,58 @@ function startScreen() {
 gameScreen code - called in drawloop when the game is on the game screen
 *****************/
 function gameScreen() {
+	//there is a delay between death and the switch to the death screen for a death animation to play
+	//!died means code won't accept input when animation is playing
 	if (!died) {
+		//if pause is toggled, toggle pause
 		if (kb.presses('p') || pauseButton.mouse.presses()) {
 			isPaused = !isPaused;
+			//toggles the background tint
 			overlay.visible = !overlay.visible;
 		}
+		//only run the game when not paused
 		if (!isPaused) {
+			//iterate the gameFrame this is the core clock of the game used to calculate score and amount of food to spawn
 			gameFrame++;
+			//makes worm hungry and checks if food is close enough to eat
 			hungerLogic();
+			//hungerLogic needs to be behind playerMove to ensuere food has at least one frame where it overlaps with worm
+			//hungerLogic triggers death, playerMove will trigger before the first !died check at the start of the loop
+			//this causes face in death animation to be slightly ofset so extra !died check was needed
 			if (!died) {
+				//moves the player
 				playerMove(WORMSPEED);
 			}
+			//calls the func to calc how much food to spawn
 			spawnFood();
+			//hides the paused only buttons (remember this only runs when game isn't paused)
 			resetButton.visible = false;
 			homeButton.visible = false;
 			pauseButton.img = pauseImg;
 		} else {
+			//triggers when not paused isn't true, aka when paused
+			//displays the paused only buttons
 			resetButton.visible = true;
 			homeButton.visible = true;
 			pauseButton.img = playImg;
 		}
+		//calls func to move camera
 		moveCamera(10);
-		moveUiElements(5);
+		//calls func to move buttons and energy bar
+		moveUiElements(5); 	
 	} else if (millis() >= diedTime + 1000 * GAMESCREENDEATHTIME) {
+		//if have been dead long enough for the death animation to play change to end screen
 		gameState = 'end';
 		endScreenSetup();
 	} else {
+		//if death animation is playing, accelerate the head downwards (for animation)
 		player.vel.y += 0.5;
+		//this one tail segment is being the background for the head (the head is an image (outline of a face) and has no fill)
 		tailSegments[WORMLENGTH - 1].vel.y += 0.5;
 	}
-	score = Math.floor(gameFrame / 6) - 480;
+	//if clicking on the home or reset buttons then go home or reset
+	//only dispalyed when paused, can't die when paused, can't toggle pause during death animation
+	//therefore these don't need to have an if not dead check
 	if (homeButton.mouse.presses() && homeButton.visible) {
 		gameState = 'start';
 		startScreenSetup();
