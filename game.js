@@ -117,8 +117,6 @@ setup
 *****************/
 function setup() {
 	frameRate(FPS);
-	noSmooth();
-	pixelDensity(1);
 	cnv = new Canvas(windowWidth, windowHeight);
 	startScreenSetup();
 }
@@ -321,7 +319,7 @@ function startScreen() {
 			clickTime = millis();
 			startTransition = true;
 		}
-		if (helpButton.mouse.presses()) {
+		if (helpButton.mouse.released()) {
 			window.open('assets/images/instructions.svg', '_blank');
 		}
 	} else if (millis() > clickTime + 50) {
