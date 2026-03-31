@@ -116,7 +116,9 @@ function preload() {
 setup
 *****************/
 function setup() {
+	// sets fps to 60 - smooth speed without being to laggy
 	frameRate(FPS);
+	// creates the canvas and calls the setup for the start screen
 	cnv = new Canvas(windowWidth, windowHeight);
 	startScreenSetup();
 }
@@ -125,14 +127,17 @@ function setup() {
 setup for the start screen
 *****************/
 function startScreenSetup() {
+	//resets everything incase moving into start screen from game or end screen
 	allSprites.removeAll();
 	startTransition = false;
 	camera.x = windowWidth / 2;
 	camera.y = windowHeight / 2;
+	//in start screen overlay is the background
 	overlay = new Sprite(860, 540, 1440, 1080, "n");
 	overlay.image = wormLife;
 	overlay.layer = 7;
 	overlay.visible = true;
+	//initial scale for responsive web design
 	if (windowWidth / 1440 < windowHeight / 1080) {
 		overlay.scale = windowWidth / 1440;
 		overlay.x = windowWidth / 2;
@@ -142,11 +147,11 @@ function startScreenSetup() {
 		overlay.x = windowWidth / 2;
 		overlay.y = windowHeight / 2;
 	}
+	//start and help button scale are based of overlay scale
 	startButton = new Sprite(overlay.x - 400 * overlay.scale, overlay.y + 320 * overlay.scale, 384, 192, 'k');
 	startButton.layer = 8;
 	startButton.image = startImg;
 	startButton.scale = overlay.scale * 1.2;
-
 
 	helpButton = new Sprite(overlay.x + 250 * overlay.scale, overlay.y + 320 * overlay.scale, 384, 192, 'k');
 	helpButton.layer = 8;
@@ -158,8 +163,8 @@ function startScreenSetup() {
 setup for the game screen
 *****************/
 function gameScreenSetup() {
+	// resets everything incase reloading from game screen or loading from end screen
 	allSprites.removeAll();
-	//reset vars
 	isPaused = false;
 	gameFrame = 0;
 	foodToSpawn = 0;
@@ -172,19 +177,24 @@ function gameScreenSetup() {
 	tailSegments = [];
 	tailBorderSegments = [];
 	foodLocations = [];
+	// a constant seed means that all players have the same experence and heigh scores are comparable
 	randomSeed(WORLDSEED);
+	//creates background
 	bgSprite = new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
 	bgSprite.image = imgBG;
 	bgSprite.layer = 0;
+	//player and ui setup
 	wormSetup();
 	camera.x = player.x;
 	camera.y = player.y;
 	uiGameSetup();
+	//overlay is used as the pause tint when in game mode
 	overlay = new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
 	overlay.color = 'grey';
 	overlay.opacity = 0.5;
 	overlay.layer = 7;
 	overlay.visible = false;
+	//calls func to populate the world with food instead of waiting for it to spawn naturally
 	initialFoodSetup();
 }
 
@@ -192,15 +202,20 @@ function gameScreenSetup() {
 subset of gameScreen setup for the worm
 *****************/
 function wormSetup() {
+	//creates the player sprites (image and border) that are controled by the player and interact with the world
 	playerBorder = new Sprite(3000, 900, WORMWIDTH, 'n');
 	playerBorder.strokeWeight = 0;
 	playerBorder.color = "black";
 	playerBorder.layer = 2;
 	player = new Sprite(playerBorder.x, playerBorder.y, WORMWIDTH - 2, "n");
+	//salmon coloured worm :)
 	player.color = "salmon";
 	player.img = imgFaceHappy;
 	player.strokeWeight = 0;
 	player.layer = 4;
+	//creates the tail sprites, they trail behind the player and are just asthetic
+	//there are two sprites for each position, a worm coloured one and a black border one
+	//means worm can have a border around the outside without you seeing it around all sides of WORMLENGTH amount of sprites
 	for (let i = 1; i <= WORMLENGTH; i++) {
 		let tailBorder = new Sprite(player.x + (i - WORMLENGTH) * WORMSPEED, player.y, WORMWIDTH, "n");
 		tailBorder.layer = 2;
@@ -212,6 +227,7 @@ function wormSetup() {
 		tail.color = "salmon";
 		tail.strokeWeight = 0;
 		tailSegments.push(tail);
+		//stored in arrays for easy access
 	}
 }
 
@@ -219,6 +235,8 @@ function wormSetup() {
 subset of gameScreen setup for the ui
 *****************/
 function uiGameSetup() {
+	//create the buttons in the top right, only pause is visable to start with
+	//set up to be have the right pos and scale for responsive web design
 	pauseButton = new Sprite(camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONMARGIN, camera.y - (windowHeight - BUTTONWIDTH) / 2 + BUTTONMARGIN, BUTTONWIDTH, BUTTONWIDTH, "k");
 	pauseButton.image = pauseImg;
 	pauseButton.layer = 8;
@@ -230,6 +248,8 @@ function uiGameSetup() {
 	homeButton.visible = false;
 	homeButton.image = homeImg;
 	homeButton.layer = 8;
+	//creating the hunger bar, has black background and a moving coloured rect to show hunger
+	//uses hsl colour so one value can change liniarly to shift from green to red
 	colorMode(HSL, 360, 100, 100);
 	hungerBar = new Sprite(camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONMARGIN, camera.y + (BUTTONWIDTH + BUTTONMARGIN) / 2 + (windowHeight - BUTTONWIDTH - BUTTONMARGIN * 11 - 6) * (1 - displayEnergy / MAXENERGY) / 2, BUTTONWIDTH - 6, (windowHeight - BUTTONWIDTH - BUTTONMARGIN * 11 - 6) * displayEnergy / MAXENERGY, 'n');
 	hungerBar.layer = 6;
@@ -244,7 +264,10 @@ function uiGameSetup() {
 subset of gameScreen setup for the initial food
 *****************/
 function initialFoodSetup() {
+	//spawns food so that there is a set amount of pixels per food - feels the same nomater the world size
 	for (let i = 0; i < WORLDX * WORLDY / INITIALFOODDENSITY; i++) {
+		//calls the create food func and passes 'true' so it will not avoid spawning food on camera
+		//this is a setup func so this happens before you load into the world (won't notice spawning food on camera)
 		newFood(true);
 	}
 }
@@ -253,13 +276,16 @@ function initialFoodSetup() {
 setup for the end screen
 *****************/
 function endScreenSetup() {
+	//resets everything
 	allSprites.removeAll();
 	camera.x = windowWidth / 2;
 	camera.y = windowHeight / 2;
+	//in end screen overlay is background
 	overlay = new Sprite(860, 540, 1920, 1080, "n");
 	overlay.image = wormDeath;
 	overlay.layer = 7;
 	overlay.visible = true;
+	//initial setup for responsive web design
 	if (windowWidth / 1440 < windowHeight / 1440) {
 		overlay.scale = windowWidth / 1620;
 		overlay.x = windowWidth / 2;
@@ -269,21 +295,24 @@ function endScreenSetup() {
 		overlay.x = windowWidth / 2;
 		overlay.y = windowHeight / 2;
 	}
+	//digit scale is based on overlay scale
 	digit1 = new Sprite(overlay.x - 60 * overlay.scale, overlay.y + 215 * overlay.scale, 40, 70, 'n');
 	digit1.scale = overlay.scale / 0.56;
 	digit2 = new Sprite(digit1.x + 90 * overlay.scale, digit1.y, 40, 70, 'n');
 	digit2.scale = digit1.scale;
-	console.log('this' + overlay.scale);
 	digit3 = new Sprite(digit2.x + 90 * overlay.scale, digit1.y, 40, 70, 'n');
 	digit3.scale = digit1.scale;
 	digit4 = new Sprite(digit3.x + 90 * overlay.scale, digit1.y, 40, 70, 'n');
 	digit4.scale = digit1.scale;
+	//final check of score
 	score = Math.floor(gameFrame / 6) - 480;
+	//sets the digits to the right numbers using remander dividing
 	digit1.image = numImgNames[Math.floor(score / 1000) % 10];
 	digit2.image = numImgNames[Math.floor(score / 100) % 10];
 	digit3.image = numImgNames[Math.floor(score / 10) % 10];
 	digit4.image = numImgNames[score % 10];
 
+	//reset and home button scale are based on overlay scale
 	resetButton = new Sprite(overlay.x + 100 * overlay.scale, overlay.y + 500 * overlay.scale, BUTTONWIDTH, BUTTONWIDTH, "k");
 	resetButton.visible = true;
 	resetButton.image = resetImg;
@@ -300,6 +329,7 @@ function endScreenSetup() {
 drawloop - gameplay loop
 *****************/
 function draw() {
+	//drawloop is used as a screen changer, all the logic is in the screen funcs
 	background('green');
 	if (gameState == 'start') {
 		startScreen();
@@ -314,19 +344,24 @@ function draw() {
 startScreen code - called in drawloop when the game is on the start screen
 *****************/
 function startScreen() {
+	//startTransition is a small delay between start button clicked and screen change (feels less abrupt / jarring)
+	//only lets you interact when not transitioning to avoid spam clicking reseting click time causing screen to not change
 	if (!startTransition) {
+		//if clicking on start, start transition
 		if (startButton.mouse.presses()) {
 			clickTime = millis();
 			startTransition = true;
 		}
+		//if clicking on how to play, open how to play window
+		//uses .released not .presses to fix a bug
 		if (helpButton.mouse.released()) {
 			window.open('assets/images/instructions.svg', '_blank');
 		}
+		// if the transition delay is over switch screens
 	} else if (millis() > clickTime + 50) {
 		gameState = 'game';
 		gameScreenSetup();
 	}
-
 }
 
 /******************
