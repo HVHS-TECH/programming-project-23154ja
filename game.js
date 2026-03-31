@@ -1,3 +1,4 @@
+//constants
 const FPS = 60;
 const WORLDX = 8192;
 const WORLDY = 8192;
@@ -58,6 +59,7 @@ let digit3;
 let digit4;
 //canvas var
 let cnv;
+//other vars
 let gameState = 'start';
 let clickTime;
 let startTransition;
@@ -79,20 +81,10 @@ let foodLocations = [];
 preload
 *****************/
 function preload() {
+	//load images
 	imgBG = loadImage('assets/images/background.webp');
 	wormLife = loadImage('assets/images/startScreen.png');
 	wormDeath = loadImage('assets/images/endScreen.png');
-	No0 = loadImage('assets/images/numbers/NO_00.png');
-	No1 = loadImage('assets/images/numbers/NO_01.png');
-	No2 = loadImage('assets/images/numbers/NO_02.png');
-	No3 = loadImage('assets/images/numbers/NO_03.png');
-	No4 = loadImage('assets/images/numbers/NO_04.png');
-	No5 = loadImage('assets/images/numbers/NO_05.png');
-	No6 = loadImage('assets/images/numbers/NO_06.png');
-	No7 = loadImage('assets/images/numbers/NO_07.png');
-	No8 = loadImage('assets/images/numbers/NO_08.png');
-	No9 = loadImage('assets/images/numbers/NO_09.png');
-	numImgNames = [No0, No1, No2, No3, No4, No5, No6, No7, No8, No9];
 	imgFaceHappy = loadImage('assets/images/faces/happy.png');
 	imgFaceOk = loadImage('assets/images/faces/ok.png');
 	imgFaceMeh = loadImage('assets/images/faces/meh.png');
@@ -105,6 +97,18 @@ function preload() {
 	homeImg = loadImage('assets/images/buttonImages/home.png');
 	startImg = loadImage('assets/images/buttonImages/start.png');
 	helpImg = loadImage('assets/images/buttonImages/howToPlay.png');
+	No0 = loadImage('assets/images/numbers/NO_00.png');
+	No1 = loadImage('assets/images/numbers/NO_01.png');
+	No2 = loadImage('assets/images/numbers/NO_02.png');
+	No3 = loadImage('assets/images/numbers/NO_03.png');
+	No4 = loadImage('assets/images/numbers/NO_04.png');
+	No5 = loadImage('assets/images/numbers/NO_05.png');
+	No6 = loadImage('assets/images/numbers/NO_06.png');
+	No7 = loadImage('assets/images/numbers/NO_07.png');
+	No8 = loadImage('assets/images/numbers/NO_08.png');
+	No9 = loadImage('assets/images/numbers/NO_09.png');
+	//assign digits to an array for easy access
+	numImgNames = [No0, No1, No2, No3, No4, No5, No6, No7, No8, No9];
 }
 /******************
 setup
