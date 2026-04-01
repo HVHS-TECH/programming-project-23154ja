@@ -449,12 +449,14 @@ function endScreen() {
 handles the logic for the movement of the player sprites (the front segment of the worm), constraining it to the world bounds
 *****************/
 function playerMove(speed) {
+	//declare local vars (has values to avoid initial NaN error)
 	let movingX = true;
 	let movingY = true;
 	let xDirection = 0;
 	let yDirection = 0;
 	let toMoveX = 0;
 	let toMoveY = 0;
+	//keyboard input detection, checks which directions the player wants to go (if trying to go two opposite directions will be considered as no input)
 	if (kb.pressing('left') && !kb.pressing('right')) {
 		xDirection = -1;
 	} else if (kb.pressing('right') && !kb.pressing('left')) {
@@ -471,18 +473,24 @@ function playerMove(speed) {
 		playerBorder.vel.y = 0;
 		movingY = false;
 	}
+	//if the player's y is the same as it was last frame (worm isn't moving along y-axis), amount to move along x-axis = full speed
 	if (playerBorder.y == tailBorderSegments[lastFrameHeadSprite].y) {
 		toMoveX = xDirection * speed;
 	} else {
+		//if the player's y is changing, move at reduced speed along x-axis (so total speed is constant)
 		toMoveX = xDirection * Math.sqrt(speed ** 2 / 2);
 	}
+	//if the player's x is the same as it was last frame (worm isn't moving along x-axis), amount to move along y-axis = full speed
 	if (playerBorder.x == tailBorderSegments[lastFrameHeadSprite].x) {
 		toMoveY = yDirection * speed;
 	} else {
+		//if the player's x is changing, move at reduced speed along y-axis (so total speed is constant)
 		toMoveY = yDirection * Math.sqrt(speed ** 2 / 2);
 	}
+	//update player location (toMove was used as a medium because if playerBorder.x was changed in place of tomMoveX it would alter the change in the worm's y)
 	playerBorder.x += toMoveX;
 	playerBorder.y += toMoveY;
+	//constraint for player.x, stops worm going of the screen to the left or the right
 	if (Math.abs(playerBorder.x - WORLDX / 2) + WORMWIDTH / 2 > WORLDX / 2) {
 		playerBorder.x = WORLDX / 2 + (playerBorder.x - WORLDX / 2) / Math.abs(playerBorder.x - WORLDX / 2) * (WORLDX / 2 - WORMWIDTH / 2);
 		if (playerBorder.x == tailBorderSegments[lastFrameHeadSprite].x) {
@@ -520,15 +528,17 @@ function playerMove(speed) {
 			// if not true then this is the first frame in which the player is going into the wall and it is still moving, just not as far as it would usually.
 		}
 	}
+	//move the player sprite (face) to the player border (colliding sprite)
 	player.x = playerBorder.x;
 	player.y = playerBorder.y;
+	//if moving, update the tail (the 'if moving' check stops the tail from bunching up when stationary)
 	if (movingX || movingY) {
 		moveTail();
 	}
 }
 
 /******************
-triggers when the window size is altered, allowing for the code to reajust and recenter
+triggers when the window size is altered, allowing for the program to re-adjust and re-center
 *****************/
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
