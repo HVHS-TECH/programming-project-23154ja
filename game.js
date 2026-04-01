@@ -177,7 +177,7 @@ function gameScreenSetup() {
 	tailSegments = [];
 	tailBorderSegments = [];
 	foodLocations = [];
-	// a constant seed means that all players have the same experence and heigh scores are comparable
+	// a constant seed means that all players have the same experience and high scores are comparable
 	randomSeed(WORLDSEED);
 	//creates background
 	bgSprite = new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
@@ -188,7 +188,7 @@ function gameScreenSetup() {
 	camera.x = player.x;
 	camera.y = player.y;
 	uiGameSetup();
-	//overlay is used as the pause tint when in game mode
+	//overlay is used as the pause tint when in game screen
 	overlay = new Sprite(WORLDX / 2, WORLDY / 2, WORLDX, WORLDY, "n");
 	overlay.color = 'grey';
 	overlay.opacity = 0.5;
@@ -249,7 +249,7 @@ function uiGameSetup() {
 	homeButton.image = homeImg;
 	homeButton.layer = 8;
 	//creating the hunger bar, has black background and a moving coloured rect to show hunger
-	//uses hsl colour so one value can change liniarly to shift from green to red
+	//uses hsl colour so one value can change linearly to shift from green to red
 	colorMode(HSL, 360, 100, 100);
 	hungerBar = new Sprite(camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONMARGIN, camera.y + (BUTTONWIDTH + BUTTONMARGIN) / 2 + (windowHeight - BUTTONWIDTH - BUTTONMARGIN * 11 - 6) * (1 - displayEnergy / MAXENERGY) / 2, BUTTONWIDTH - 6, (windowHeight - BUTTONWIDTH - BUTTONMARGIN * 11 - 6) * displayEnergy / MAXENERGY, 'n');
 	hungerBar.layer = 6;
@@ -610,8 +610,10 @@ function windowResized() {
 called in the drawloop, code to move the camera smoothly towards the player and not to show outside the world bounds
 *****************/
 function moveCamera(percentPerFrame) {
+	//increase the camera's position by a percentage of the dist between camera and player
 	camera.x += (player.x - camera.x) * (percentPerFrame / 100)
 	camera.y += (player.y - camera.y) * (percentPerFrame / 100)
+	//stops the camera from showing anything outside the world bounds
 	if (Math.abs(camera.x - WORLDX / 2) + windowWidth / 2 > WORLDX / 2) {
 		camera.x = WORLDX / 2 + (camera.x - WORLDX / 2) / Math.abs(camera.x - WORLDX / 2) * (WORLDX / 2 - windowWidth / 2)
 	}
@@ -624,6 +626,7 @@ function moveCamera(percentPerFrame) {
 code to move the ui in the gameScreen
 *****************/
 function moveUiElements(energyBarPercentPerFrame) {
+	//set the buttons to a certain position based off of camera pos
 	pauseButton.x = camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONMARGIN;
 	pauseButton.y = camera.y - (windowHeight - BUTTONWIDTH) / 2 + BUTTONMARGIN;
 	resetButton.x = camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONWIDTH - 2 * BUTTONMARGIN;
@@ -633,11 +636,17 @@ function moveUiElements(energyBarPercentPerFrame) {
 	hungerBarBackground.x = camera.x + (windowWidth - BUTTONWIDTH) / 2 - BUTTONMARGIN;
 	hungerBarBackground.y = camera.y + (BUTTONWIDTH + BUTTONMARGIN) / 2;
 	hungerBarBackground.strokeWeight = 0;
+	//dispay energy will interpolate towards actual energy, giving smooth increase when eating
 	displayEnergy += (energy - displayEnergy) * (energyBarPercentPerFrame / 100);
+	//uses hsl colour so one value can change linearly to shift from green to red
 	colorMode(HSL, 360, 100, 100);
+	//hunger bar has same x value as its background
 	hungerBar.x = hungerBarBackground.x;
+	//calculates appropriate hungerbar y value
 	hungerBar.y = camera.y + (BUTTONWIDTH + BUTTONMARGIN) / 2 + (windowHeight - BUTTONWIDTH - BUTTONMARGIN * 11 - 6) * (1 - displayEnergy / MAXENERGY) / 2;
+	//calculates appropriate height based on display energy
 	hungerBar.height = (windowHeight - BUTTONWIDTH - BUTTONMARGIN * 11 - 6) * displayEnergy / MAXENERGY;
+	//sets colour of hungerbar based on display energy
 	hungerBar.color = color(10 + 90 * displayEnergy / MAXENERGY, 100, 50);
 	hungerBar.strokeWeight = 0;
 	colorMode(RGB, 255);
@@ -647,14 +656,18 @@ function moveUiElements(energyBarPercentPerFrame) {
 moves the tail along behind the player sprites
 *****************/
 function moveTail() {
+	//tailSprite is the id in array of the sprites at the end of the worm
+	//teleports the tailSprite backround and fill segments to the worm's head
 	tailSegments[tailSprite].x = player.x;
 	tailSegments[tailSprite].y = player.y;
 	tailBorderSegments[tailSprite].x = player.x;
 	tailBorderSegments[tailSprite].y = player.y;
+	//updates tailSprite to equal the id of the new sprites at the end of the worm
 	tailSprite++;
 	if (tailSprite == WORMLENGTH) {
 		tailSprite = 0;
 	}
+	//does the same for lastFrameHeadSprite (used in playerMove func)
 	lastFrameHeadSprite++;
 	if (lastFrameHeadSprite == WORMLENGTH) {
 		lastFrameHeadSprite = 0;
@@ -662,42 +675,63 @@ function moveTail() {
 }
 
 /******************
-logic to spawn food throughout the game (not initialy)
+logic on when to spawn food throughout the game (not initialy)
 *****************/
 function spawnFood() {
+	//food to spawn each frame follows a hyperbolic curve, decreasing fast, then slower as time goes on
+	//it aproches an asomtote but never reaches it, meaning that there will always be some food spawned
+	//the player must die eventuly as the asomtote of will be less food per second than the worm needs to survive
 	foodToSpawn += (FOODABUNDANCE * (INITIALFOODPERSECOND - MINFOODPERSECOND)) / (gameFrame * (INITIALFOODPERSECOND - MINFOODPERSECOND) + FPS * FOODABUNDANCE) + MINFOODPERSECOND / FPS;
+	//uses a variable to track how much food to spawn as it might only be a fraction each frame
+	//foodToSpawn builds up until it reaches 1 and then calls the func which actuly creates and places the food.
 	while (foodToSpawn >= 1) {
 		foodToSpawn += -1;
+		//the false means it must spawn someware of the screen
 		newFood(false);
 	}
 }
 
 /******************
-func to spawn a piece of food, called many times during setup and also throughout the game
+func to spawn a piece of food, called during setup and throughout the game
 *****************/
 function newFood(spawnOnScreen) {
+	//declare local variables
+	// repeat starts as true so the while loop will be triggered
 	let repeat = true;
 	let x
 	let y
 	while (repeat) {
+		//set repeat to false (if it works the first time it shouldn't repeat)
 		repeat = false;
+		//generate rand coords within the playable area
 		x = random(FOODWIDTH, WORLDX - FOODWIDTH);
 		y = random(SKYHEIGHT + GRASSHEIGHT + FOODWIDTH, WORLDY - FOODWIDTH);
+		//only triggers if not supposed to spawn on screen (skiped in initial setup)
 		if (!spawnOnScreen) {
+			//checks if the coords would put the new food on the screen
 			if (x >= camera.x - (windowWidth + FOODWIDTH) / 2 && x <= camera.x + (windowWidth + FOODWIDTH) / 2) {
 				if (y >= camera.y - (windowHeight + FOODWIDTH) / 2 && y <= camera.y + (windowHeight + FOODWIDTH) / 2) {
+					//causes the loop to repeat, trying again to find valid coords
 					repeat = true;
+					//skips the rest of the code in the current iteration of the loop
+					//if coords need to be regenerated anyway there is no point in doing more checks
 					continue;
 				}
 			}
 		}
-		for (let i2 = 0; i2 < foodLocations.length; i2++) {
-			if (Math.max(Math.abs(foodLocations[i2].x - x), Math.abs(foodLocations[i2].y - y)) < FOODWIDTH + MINFOODSEPERATION) {
+		//cycles through existing food
+		for (let i = 0; i < foodLocations.length; i++) {
+			//checks to see if the new coords would spawn food on top of or too close to existing food
+			if (Math.max(Math.abs(foodLocations[i].x - x), Math.abs(foodLocations[i].y - y)) < FOODWIDTH + MINFOODSEPERATION) {
+				//causes the loop to repeat, trying again to find valid coords
 				repeat = true;
+				//stops the current loop as we already know we need to regenerate coords
+				//note: stops the for loop checking for overlaps with other food, not the while loop trying to spawn the new food
 				break;
 			}
 		}
 	}
+	//once valid coords have been found create the new food and add it to the array
 	let foodItem = new Sprite(x, y, FOODWIDTH, "n");
 	foodItem.layer = 1;
 	foodLocations.push(foodItem);
