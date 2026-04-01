@@ -18,7 +18,7 @@ const FOODABUNDANCE = 10;
 const MAXENERGY = 58 * FPS;
 const INITIALENERGY = 48 * FPS;
 const GAMESCREENDEATHTIME = 2.3;
-const WORLDSEED = 112358;
+const WORLDSEED = 314159;
 //image vars
 let imgBG;
 let imgFaceHappy;
