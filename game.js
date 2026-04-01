@@ -15,8 +15,8 @@ const INITIALFOODDENSITY = 2000 ** 2;
 const INITIALFOODPERSECOND = 0.4;
 const MINFOODPERSECOND = 0.1;
 const FOODABUNDANCE = 10;
-const MAXENERGY = 58 * 60;
-const INITIALENERGY = 48 * 60;
+const MAXENERGY = 58 * FPS;
+const INITIALENERGY = 48 * FPS;
 const GAMESCREENDEATHTIME = 2.3;
 const WORLDSEED = 112358;
 //image vars
@@ -116,7 +116,7 @@ function preload() {
 setup
 *****************/
 function setup() {
-	// sets fps to 60 - smooth speed without being to laggy
+	// sets fps to const FPS (60) - smooth speed without being to laggy
 	frameRate(FPS);
 	// creates the canvas and calls the setup for the start screen
 	cnv = new Canvas(windowWidth, windowHeight);
@@ -305,9 +305,9 @@ function endScreenSetup() {
 	digit4 = new Sprite(digit3.x + 90 * overlay.scale, digit1.y, 40, 70, 'n');
 	digit4.scale = digit1.scale;
 	//calculate score, -480 is the score you would get if you don't eat anything. - makes sure that the min score is 0
-	//also keeps score in the hundreds to thousends by increasing every tenth of a second instead of every frame (60th of a second)
-	score = Math.floor(gameFrame / 6) - 480;
-	//sets the digits to the right numbers using remander dividing
+	//also keeps score in the hundreds to thousands by increasing every tenth of a second instead of every frame (60th of a second)
+	score = Math.floor(gameFrame / (FPS / 10)) - 480;
+	//sets the digits to the right numbers using remainder dividing
 	digit1.image = numImgNames[Math.floor(score / 1000) % 10];
 	digit2.image = numImgNames[Math.floor(score / 100) % 10];
 	digit3.image = numImgNames[Math.floor(score / 10) % 10];
@@ -741,44 +741,72 @@ function newFood(spawnOnScreen) {
 logic managing the worm's hunger system including eating eating food and triggering the end of the game
 *****************/
 function hungerLogic() {
+	//iterates through all the food
 	for (let i = foodLocations.length - 1; i >= 0; i--) {
+		//if the food and the player sprite are overlapping (minus a margin of 7 pixels)
 		if (Math.sqrt((playerBorder.x - foodLocations[i].x) ** 2 + (playerBorder.y - foodLocations[i].y) ** 2) < FOODWIDTH / 2 + WORMWIDTH / 2 - 7) {
-			foodLocations[i].life = 6;
+			//delete the food in 100 miliseconds (6 frames) - makes it feel like it was eaten
+			foodLocations[i].life = (FPS / 10);
+			//remove food from array, letting new food can spawn in its spot
 			foodLocations.splice(i, 1);
-			//check if this works
-			energy += 5 * 60;
+			//gives the player 5 seconds of energy
+			energy += 5 * FPS;
 		}
 	}
+	//slowly decrease energy
 	energy += -1;
+	//if we rely on displayEnergy's interpolation it will lag behind and you will die when it looks like you still have energy
 	displayEnergy += -1;
+	//if displayed energy is less than a quarter
 	if (displayEnergy / MAXENERGY < 0.25) {
+		//change face to eh
 		player.img = imgFaceMeh;
+		//else if displayed energy is less than half
 	} else if (displayEnergy / MAXENERGY < 0.5) {
+		//change face to OK
 		player.img = imgFaceOk;
+		//else (displayed energy will be above one half)
 	} else {
+		//change face to happy
 		player.img = imgFaceHappy;
 	}
+	//caps the energy, stopping the player from getting more than a full bar
 	if (energy > MAXENERGY) {
 		energy = MAXENERGY;
+		//if energy runs out
 	} else if (energy <= 0) {
+		//start death animation
 		died = true;
 		diedTime = millis();
+		//hunger bar shouldn't be visable anyway as displayed energy should equal 0
+		//removing it stops it from bugging out
 		hungerBar.remove();
+
+		//cycles through all of the tail sprites exept the last one
 		for (let i = 0; i < WORMLENGTH - 1; i++) {
+			//selects every third one
 			if (Math.floor(i % 3) == 1) {
+				//makes it collide
 				tailSegments[i].collider = 'd';
 				tailSegments[i].vel.x = random(-0.5, 0.5);
 				tailSegments[i].vel.y = random(-0.5, 0.5);
 			} else {
+				//gets rid of the other two thirds
 				tailSegments[i].remove();
 			}
+			//removes all of the border sprites
 			tailBorderSegments[i].remove();
 		}
+		//removes the last tail border sprite
 		tailBorderSegments[WORMLENGTH - 1].remove();
+		//takes the last tail sprite and gives it the same propertys as the face
+		//it's being the background for the head (the head is an image (outline of a face) and has no fill)
 		tailSegments[WORMLENGTH - 1].x = player.x;
 		tailSegments[WORMLENGTH - 1].y = player.y;
 		tailSegments[WORMLENGTH - 1].vel.y = -17;
+		//removes the player border
 		playerBorder.remove();
+		//causes the head to fly into the air and fall back down (the speed will decrease every frame in the endScreen func)
 		player.vel.y = -17;
 		player.img = imgFaceShock;
 	}
