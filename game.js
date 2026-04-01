@@ -1,5 +1,5 @@
 //constants
-const FPS = 60;
+const FPS = FPS;
 const WORLDX = 8192;
 const WORLDY = 8192;
 const BUTTONWIDTH = 60;
@@ -538,73 +538,26 @@ function playerMove(speed) {
 }
 
 /******************
-triggers when the window size is altered, allowing for the program to re-adjust and re-center
+moves the tail along behind the player sprites
 *****************/
-function windowResized() {
-	//resize the canvas (basically the window into the world) to the screen size
-	resizeCanvas(windowWidth, windowHeight);
-	//code to run in start screen
-	if (gameState == 'start') {
-		//background image is 1440 by 1080, this checks to see if it is limited horizontally
-		if (windowWidth / 1440 < windowHeight / 1080) {
-			//ajust scale so width = windowwidth
-			overlay.scale = windowWidth / 1440;
-			overlay.x = windowWidth / 2;
-			//keep positioned at the top of the screen
-			overlay.y = overlay.scale * 540;
-		} else {
-			//if background is limited vertically, set height to window height
-			overlay.scale = windowHeight / 1080;
-			//keep positioned in the middle of the screen
-			overlay.x = windowWidth / 2;
-			overlay.y = windowHeight / 2;
-		}
-		//start and help button pos and scale are based on overlay
-		startButton.x = overlay.x - 400 * overlay.scale;
-		startButton.y = overlay.y + 320 * overlay.scale;
-		startButton.scale = startButton.scale = overlay.scale * 1.2;
-		helpButton.x = overlay.x + 250 * overlay.scale;
-		helpButton.y = overlay.y + 320 * overlay.scale;
-		helpButton.scale = startButton.scale = overlay.scale * 1.2;
-
-		//code to run in end screen
-	} else if (gameState == 'end') {
-		//background image is 1620 by 1440, this checks to see if it is limited horizontally
-		if (windowWidth / 1620 < windowHeight / 1440) {
-			//ajust scale so width = windowwidth
-			overlay.scale = windowWidth / 1620;
-			overlay.x = windowWidth / 2;
-			//keep positioned at the top of the screen
-			overlay.y = overlay.scale * 720;
-		} else {
-			//if background is limited vertically, set height to window height
-			overlay.scale = windowHeight / 1440;
-			//keep positioned in the middle of the screen
-			overlay.x = windowWidth / 2;
-			overlay.y = windowHeight / 2;
-		}
-		//digit pos and scale are based on overlay
-		digit1.x = overlay.x - 60 * overlay.scale;
-		digit1.y = overlay.y + 215 * overlay.scale;
-		digit1.scale = overlay.scale / 0.56;
-		digit2.x = digit1.x + 90 * overlay.scale;
-		digit2.y = digit1.y;
-		digit2.scale = digit1.scale;
-		digit3.x = digit2.x + 90 * overlay.scale;
-		digit3.y = digit1.y;
-		digit3.scale = digit1.scale;
-		digit4.x = digit3.x + 90 * overlay.scale;
-		digit4.y = digit1.y;
-		digit4.scale = digit1.scale;
-		//reset and home button pos and scale are based on overlay
-		resetButton.x = overlay.x + 100 * overlay.scale;
-		resetButton.y = overlay.y + 500 * overlay.scale;
-		homeButton.x = overlay.x - 400 * overlay.scale;
-		homeButton.y = overlay.y + 500 * overlay.scale;
-		homeButton.scale = 4 * overlay.scale;
-		resetButton.scale = 4 * overlay.scale;
+function moveTail() {
+	//tailSprite is the id in array of the sprites at the end of the worm
+	//teleports the tailSprite backround and fill segments to the worm's head
+	tailSegments[tailSprite].x = player.x;
+	tailSegments[tailSprite].y = player.y;
+	tailBorderSegments[tailSprite].x = player.x;
+	tailBorderSegments[tailSprite].y = player.y;
+	//updates tailSprite to equal the id of the new sprites at the end of the worm
+	tailSprite++;
+	if (tailSprite == WORMLENGTH) {
+		tailSprite = 0;
 	}
-};
+	//does the same for lastFrameHeadSprite (used in playerMove func)
+	lastFrameHeadSprite++;
+	if (lastFrameHeadSprite == WORMLENGTH) {
+		lastFrameHeadSprite = 0;
+	}
+}
 
 /******************
 called in the drawloop, code to move the camera smoothly towards the player and not to show outside the world bounds
@@ -650,28 +603,6 @@ function moveUiElements(energyBarPercentPerFrame) {
 	hungerBar.color = color(10 + 90 * displayEnergy / MAXENERGY, 100, 50);
 	hungerBar.strokeWeight = 0;
 	colorMode(RGB, 255);
-}
-
-/******************
-moves the tail along behind the player sprites
-*****************/
-function moveTail() {
-	//tailSprite is the id in array of the sprites at the end of the worm
-	//teleports the tailSprite backround and fill segments to the worm's head
-	tailSegments[tailSprite].x = player.x;
-	tailSegments[tailSprite].y = player.y;
-	tailBorderSegments[tailSprite].x = player.x;
-	tailBorderSegments[tailSprite].y = player.y;
-	//updates tailSprite to equal the id of the new sprites at the end of the worm
-	tailSprite++;
-	if (tailSprite == WORMLENGTH) {
-		tailSprite = 0;
-	}
-	//does the same for lastFrameHeadSprite (used in playerMove func)
-	lastFrameHeadSprite++;
-	if (lastFrameHeadSprite == WORMLENGTH) {
-		lastFrameHeadSprite = 0;
-	}
 }
 
 /******************
@@ -811,3 +742,72 @@ function hungerLogic() {
 		player.img = imgFaceShock;
 	}
 }
+
+/******************
+triggers when the window size is altered, allowing for the program to re-adjust and re-center
+*****************/
+function windowResized() {
+	//resize the canvas (basically the window into the world) to the screen size
+	resizeCanvas(windowWidth, windowHeight);
+	//code to run in start screen
+	if (gameState == 'start') {
+		//background image is 1440 by 1080, this checks to see if it is limited horizontally
+		if (windowWidth / 1440 < windowHeight / 1080) {
+			//ajust scale so width = windowwidth
+			overlay.scale = windowWidth / 1440;
+			overlay.x = windowWidth / 2;
+			//keep positioned at the top of the screen
+			overlay.y = overlay.scale * 540;
+		} else {
+			//if background is limited vertically, set height to window height
+			overlay.scale = windowHeight / 1080;
+			//keep positioned in the middle of the screen
+			overlay.x = windowWidth / 2;
+			overlay.y = windowHeight / 2;
+		}
+		//start and help button pos and scale are based on overlay
+		startButton.x = overlay.x - 400 * overlay.scale;
+		startButton.y = overlay.y + 320 * overlay.scale;
+		startButton.scale = startButton.scale = overlay.scale * 1.2;
+		helpButton.x = overlay.x + 250 * overlay.scale;
+		helpButton.y = overlay.y + 320 * overlay.scale;
+		helpButton.scale = startButton.scale = overlay.scale * 1.2;
+
+		//code to run in end screen
+	} else if (gameState == 'end') {
+		//background image is 1620 by 1440, this checks to see if it is limited horizontally
+		if (windowWidth / 1620 < windowHeight / 1440) {
+			//ajust scale so width = windowwidth
+			overlay.scale = windowWidth / 1620;
+			overlay.x = windowWidth / 2;
+			//keep positioned at the top of the screen
+			overlay.y = overlay.scale * 720;
+		} else {
+			//if background is limited vertically, set height to window height
+			overlay.scale = windowHeight / 1440;
+			//keep positioned in the middle of the screen
+			overlay.x = windowWidth / 2;
+			overlay.y = windowHeight / 2;
+		}
+		//digit pos and scale are based on overlay
+		digit1.x = overlay.x - 60 * overlay.scale;
+		digit1.y = overlay.y + 215 * overlay.scale;
+		digit1.scale = overlay.scale / 0.56;
+		digit2.x = digit1.x + 90 * overlay.scale;
+		digit2.y = digit1.y;
+		digit2.scale = digit1.scale;
+		digit3.x = digit2.x + 90 * overlay.scale;
+		digit3.y = digit1.y;
+		digit3.scale = digit1.scale;
+		digit4.x = digit3.x + 90 * overlay.scale;
+		digit4.y = digit1.y;
+		digit4.scale = digit1.scale;
+		//reset and home button pos and scale are based on overlay
+		resetButton.x = overlay.x + 100 * overlay.scale;
+		resetButton.y = overlay.y + 500 * overlay.scale;
+		homeButton.x = overlay.x - 400 * overlay.scale;
+		homeButton.y = overlay.y + 500 * overlay.scale;
+		homeButton.scale = 4 * overlay.scale;
+		resetButton.scale = 4 * overlay.scale;
+	}
+};
