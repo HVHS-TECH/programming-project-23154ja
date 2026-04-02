@@ -1,5 +1,5 @@
 //constants
-const FPS = FPS;
+const FPS = 60;
 const WORLDX = 8192;
 const WORLDY = 8192;
 const BUTTONWIDTH = 60;
